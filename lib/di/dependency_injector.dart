@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pine/pine.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:sudoku/cubits/theme/theme_cubit.dart';
 
 part 'blocs.dart';
 
