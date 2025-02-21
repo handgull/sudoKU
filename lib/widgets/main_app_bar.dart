@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sudoku/extensions/localized_context.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MainAppBar({required this.changeMode, super.key});
+  const MainAppBar({required this.changeMode, this.leading, super.key});
 
+  final Widget? leading;
   final void Function(ThemeMode? mode) changeMode;
 
   @override
@@ -11,7 +12,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     final brightness = Theme.of(context).brightness;
 
     return AppBar(
-      leading: const Icon(Icons.calculate, color: Colors.redAccent),
+      leading: leading,
       title: Text(
         context.t?.appName ?? 'APP_NAME',
         style: const TextStyle(fontWeight: FontWeight.bold),
