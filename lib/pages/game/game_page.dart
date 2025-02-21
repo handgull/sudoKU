@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:sudoku/cubits/theme/theme_cubit.dart';
 import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/constants.dart';
+import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
 import 'package:sudoku/pages/game/widgets/keyboard_numbers.dart';
 import 'package:sudoku/routers/app_router.gr.dart';

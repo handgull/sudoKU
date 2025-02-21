@@ -1,2 +1,4 @@
 bricks:
   pine: ^0.2.0
+  pine_model: ^0.3.0+1
+  pine_network_jto: ^0.3.0+1
