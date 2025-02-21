@@ -24,13 +24,11 @@ class LightTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: secondaryColor,
-        foregroundColor: Colors.black,
-        shape: LinearBorder.none,
+        foregroundColor: Colors.white,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
         side: const BorderSide(color: secondaryColor),
       ),
     ),
@@ -69,12 +67,10 @@ class DarkTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: secondaryColor,
         foregroundColor: Colors.white,
-        shape: LinearBorder.none,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
         side: const BorderSide(color: secondaryColor),
       ),
     ),
@@ -82,5 +78,8 @@ class DarkTheme {
       style: TextButton.styleFrom(shape: LinearBorder.none),
     ),
     dividerTheme: DividerThemeData(color: Colors.grey[850]),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      foregroundColor: Colors.white,
+    ),
   );
 }

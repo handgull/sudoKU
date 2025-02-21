@@ -2,5 +2,16 @@
   "appName": "sudo...KU!",
   "darkTheme": "Modalità scura",
   "lightTheme": "Modalità chiaro",
-  "newGame": "New game!"
+  "newGame": "New game!",
+  "notesOn": "Note: ON",
+  "notesOff": "Note: OFF",
+  "erase": "Cancella",
+  "restart": "Ricomincia",
+  "difficulty": "Seleziona Difficoltà",
+  "beginner": "Principiante",
+  "easy": "Facile",
+  "medium": "Medio",
+  "hard": "Difficile",
+  "pause": "Pausa",
+  "resume": "Riprendi"
 }

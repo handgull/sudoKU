@@ -15,7 +15,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: leading,
       title: Text(
         context.t?.appName ?? 'APP_NAME',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2,
+        ),
       ),
       actions: [
         IconButton(
