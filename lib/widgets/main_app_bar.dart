@@ -8,6 +8,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+
     return AppBar(
       leading: const Icon(Icons.calculate, color: Colors.redAccent),
       title: Text(
@@ -16,15 +18,18 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          onPressed: () => toggleTheme(context),
+          onPressed: () => toggleTheme(brightness),
           icon: const _ToggleIcon(),
+          tooltip:
+              brightness == Brightness.light
+                  ? context.t?.darkTheme
+                  : context.t?.lightTheme,
         ),
       ],
     );
   }
 
-  void toggleTheme(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
+  void toggleTheme(Brightness brightness) {
     changeMode(
       brightness == Brightness.light ? ThemeMode.dark : ThemeMode.light,
     );
