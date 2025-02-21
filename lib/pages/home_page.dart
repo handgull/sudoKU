@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
       appBar: MainAppBar(
         changeMode: (mode) => context.read<ThemeCubit>().changeMode(mode),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: () {}),
     );
   }
 }
