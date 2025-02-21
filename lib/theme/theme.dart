@@ -56,7 +56,10 @@ class DarkTheme {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     ),
-    appBarTheme: const AppBarTheme(backgroundColor: Color(0xFF1A237E)),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF1A237E),
+      foregroundColor: Colors.white,
+    ),
     inputDecorationTheme: const InputDecorationTheme(
       errorMaxLines: 10,
       enabledBorder: UnderlineInputBorder(

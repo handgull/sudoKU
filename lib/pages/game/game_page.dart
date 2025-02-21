@@ -46,7 +46,7 @@ class GamePage extends StatelessWidget {
                   activeDifficulty: Difficulty.medium, // TODO allacciare
                 ),
                 IconButton(
-                  tooltip: context.t?.restart,
+                  tooltip: context.t?.newGame,
                   onPressed: () {},
                   icon: const Icon(Icons.restart_alt),
                 ),
