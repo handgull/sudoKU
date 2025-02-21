@@ -8,8 +8,8 @@ import 'package:sudoku/routers/app_router.gr.dart';
 import 'package:sudoku/widgets/main_app_bar.dart';
 
 @RoutePage()
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class StatsPage extends StatelessWidget {
+  const StatsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
