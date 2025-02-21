@@ -20,8 +20,8 @@ fvm flutter pub get
 4. Generate the source code, either using the watcher (generates files on the fly) or by directly building:
 
 ```sh
-fvm flutter pub run build_runner watch --delete-conflicting-outputs # watcher
-fvm flutter pub run build_runner build --delete-conflicting-outputs # simple builder
+fvm dart run build_runner watch --delete-conflicting-outputs # watcher
+fvm dart run build_runner build --delete-conflicting-outputs # simple builder
 ```
 
 ## Dependencies update
