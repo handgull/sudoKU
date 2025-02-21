@@ -52,3 +52,11 @@ fvm dart run flutter_launcher_icons:generate # Init of flutter_launcher_icons.ya
 fvm dart run flutter_launcher_icons:generate -o # Overrides old yaml
 fvm dart run flutter_launcher_icons # Generates all the native files (based on yaml content)
 ```
+
+## Mason commands
+
+```sh
+mason init
+mason add brick-name # Adds the brick to the project
+mason make brick-name # Executes the brick
+```
