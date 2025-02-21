@@ -32,9 +32,23 @@ fvm flutter pub upgrade --major-versions
 
 > Run this at least once a month
 
-## Fluuter update via fvm
+## Flutter update via fvm
 
 ```sh
 fvm releases # shows the available versions of flutter to install locally
 fvm use x.x.x # sets as active the new flutter version
+```
+
+## Splash screen generation
+
+```sh
+fvm dart run flutter_native_splash:create --path=flutter_native_splash.yaml
+```
+
+## Launcher icon generation
+
+```sh
+fvm dart run flutter_launcher_icons:generate # Init of flutter_launcher_icons.yaml
+fvm dart run flutter_launcher_icons:generate -o # Overrides old yaml
+fvm dart run flutter_launcher_icons # Generates all the native files (based on yaml content)
 ```
