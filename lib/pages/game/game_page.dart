@@ -1,19 +1,19 @@
-import 'dart:developer';
-import 'dart:math' hide log;
+import 'dart:math';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/blocs/game/game_bloc.dart';
 import 'package:sudoku/cubits/active_cell/active_cell_cubit.dart';
+import 'package:sudoku/cubits/game_timer/game_timer_cubit.dart';
 import 'package:sudoku/cubits/theme/theme_cubit.dart';
 import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/constants.dart';
 import 'package:sudoku/mixins/snackbar_mixin.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
-import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 import 'package:sudoku/pages/game/widgets/board.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
+import 'package:sudoku/pages/game/widgets/game_time.dart';
 import 'package:sudoku/pages/game/widgets/keyboard_numbers.dart';
 import 'package:sudoku/routers/app_router.gr.dart';
 import 'package:sudoku/widgets/main_app_bar.dart';
@@ -28,9 +28,17 @@ class GamePage extends StatelessWidget
   Widget wrappedRoute(BuildContext context) => MultiBlocProvider(
     providers: [
       BlocProvider(
-        create: (context) => GameBloc(gameRepository: context.read())..start(),
+        create:
+            (context) => GameBloc(
+              gameRepository: context.read(),
+              gameTimerRepository: context.read(),
+            )..start(),
       ),
       BlocProvider(create: (context) => ActiveCellCubit()),
+      BlocProvider(
+        create:
+            (context) => GameTimerCubit(gameTimerRepository: context.read()),
+      ),
     ],
     child: this,
   );
@@ -38,25 +46,29 @@ class GamePage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final noteMode = Random().nextBool(); // TODO allacciare logica
-    final paused = Random().nextBool(); // TODO allacciare logica
 
     return BlocConsumer<GameBloc, GameState>(
       listener:
           (context, state) => switch (state) {
-            RunningGameState() => log(state.data.toString()),
             ErrorStartingGameState() => _onErrorStarting(context),
-            _ => debugPrint(state.runtimeType.toString()),
+            _ => null,
           },
       builder: (context, gameState) {
+        // TODO fare un hydratedcubit a parte
         final activeDifficulty = switch (gameState) {
           RunningGameState() => gameState.data.difficulty,
           _ => Difficulty.medium,
         };
 
         final gameData = switch (gameState) {
-          RunningGameState() => gameState.data.board,
-          ErrorStartingGameState() => <List<SudokuCell>>[],
+          RunningGameState() => gameState.data,
+          PausedGameState() => gameState.data,
           _ => null,
+        };
+
+        final gamePaused = switch (gameState) {
+          PausedGameState() => true,
+          _ => false,
         };
 
         return BlocBuilder<ActiveCellCubit, ActiveCellState>(
@@ -108,18 +120,34 @@ class GamePage extends StatelessWidget
                     Expanded(
                       child: Center(
                         child: Board(
-                          board: gameData,
+                          board: gameData?.board,
+                          paused: gamePaused,
                           activeQuadrant: activeCellIndexes?.quadrant,
                           activeQuadrantIndex: activeCellIndexes?.index,
                           onCellTap:
                               (quadrant, index) => context
                                   .read<ActiveCellCubit>()
                                   .setActive(quadrant, index),
+                          restart: () {
+                            if (gameData != null) {
+                              context.read<GameBloc>().togglePause(gameData);
+                            }
+                          },
                         ),
                       ),
                     ),
+                    BlocBuilder<GameTimerCubit, GameTimerState>(
+                      builder: (context, gameTimerState) {
+                        final seconds = switch (gameTimerState) {
+                          TickedGameTimerState() => gameTimerState.seconds,
+                          _ => null,
+                        };
+
+                        return GameTime(seconds: seconds);
+                      },
+                    ),
                     const Padding(
-                      padding: EdgeInsets.only(bottom: 24),
+                      padding: EdgeInsets.only(top: 6, bottom: 24),
                       child: KeyboardNumbers(),
                     ),
                     Row(
@@ -151,7 +179,6 @@ class GamePage extends StatelessWidget
                             ],
                           ),
                         ),
-                        // TODO nascondere se la active cell non è editabile
                         OutlinedButton(
                           onPressed: () {},
                           child: Row(
@@ -167,14 +194,21 @@ class GamePage extends StatelessWidget
                   ],
                 ),
               ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {},
-                tooltip: paused ? context.t?.resume : context.t?.pause,
-                child:
-                    paused
-                        ? const Icon(Icons.play_arrow)
-                        : const Icon(Icons.pause),
-              ),
+
+              floatingActionButton:
+                  gameData != null
+                      ? FloatingActionButton(
+                        onPressed: () {
+                          context.read<GameBloc>().togglePause(gameData);
+                        },
+                        tooltip:
+                            gamePaused ? context.t?.resume : context.t?.pause,
+                        child:
+                            gamePaused
+                                ? const Icon(Icons.play_arrow)
+                                : const Icon(Icons.pause),
+                      )
+                      : const FloatingActionButton(onPressed: null),
             );
           },
         );

@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 
@@ -6,25 +9,29 @@ class Board extends StatelessWidget {
   const Board({
     required this.board,
     required this.onCellTap,
+    required this.restart,
     this.activeQuadrant,
     this.activeQuadrantIndex,
+    this.paused = false,
     super.key,
   });
 
   final List<List<SudokuCell>>? board;
+  final bool paused;
   final int? activeQuadrant;
   final int? activeQuadrantIndex;
   final void Function(int, int) onCellTap;
+  final void Function() restart;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        ColoredBox(
-          color: Theme.of(context).dividerTheme.color ?? Colors.transparent,
-          child: AbsorbPointer(
-            absorbing: false, // TODO collegare alla pausa
+    return ColoredBox(
+      color: Theme.of(context).dividerTheme.color ?? Colors.transparent,
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          AbsorbPointer(
+            absorbing: paused,
             child: GridView.builder(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
@@ -51,9 +58,39 @@ class Board extends StatelessWidget {
                   ),
             ),
           ),
-        ),
-        if (board == null) const CircularProgressIndicator(),
-      ],
+          if (board == null) const CircularProgressIndicator(),
+          if (paused)
+            Positioned.fill(
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Center(
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).cardColor,
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          tooltip: context.t?.resume,
+                          iconSize: 100,
+                          icon: Icon(
+                            Icons.play_circle,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: restart,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

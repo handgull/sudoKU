@@ -9,4 +9,8 @@ final List<RepositoryProvider<dynamic>> _repositories = [
           sudokuDataMapper: context.read(),
         ),
   ),
+  RepositoryProvider<GameTimerRepository>(
+    create:
+        (context) => GameTimerRepositoryImpl(gameTimerService: context.read()),
+  ),
 ];

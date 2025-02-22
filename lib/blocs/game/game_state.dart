@@ -8,13 +8,13 @@ sealed class GameState with _$GameState {
 
   const factory GameState.errorStarting() = ErrorStartingGameState;
 
-  const factory GameState.paused() = PausedGameState;
+  const factory GameState.paused(SudokuData data) = PausedGameState;
 
   const factory GameState.errorFreezing() = ErrorFreezingGameState;
 
-  const factory GameState.gameOver() = GameOverGameState;
+  const factory GameState.gameOver(SudokuData data) = GameOverGameState;
 
-  const factory GameState.won() = WonGameState;
+  const factory GameState.won(SudokuData data) = WonGameState;
 
   const factory GameState.moving() = MovingGameState;
 

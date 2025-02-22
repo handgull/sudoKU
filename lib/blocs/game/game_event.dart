@@ -8,5 +8,5 @@ sealed class GameEvent with _$GameEvent {
 
   const factory GameEvent.move() = MoveGameEvent;
 
-  const factory GameEvent.togglePause() = TogglePauseGameEvent;
+  const factory GameEvent.togglePause(SudokuData data) = TogglePauseGameEvent;
 }
