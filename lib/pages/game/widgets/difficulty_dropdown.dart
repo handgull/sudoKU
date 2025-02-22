@@ -8,7 +8,7 @@ class DifficultyDropdown extends StatelessWidget {
     super.key,
   });
 
-  final Difficulty activeDifficulty;
+  final Difficulty? activeDifficulty;
   final void Function(Difficulty) onDifficultyChanged;
 
   @override

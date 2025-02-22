@@ -12,5 +12,6 @@
   "medium": "Medio",
   "hard": "Difficile",
   "pause": "Pausa",
-  "resume": "Riprendi"
+  "resume": "Riprendi",
+  "errorStartingGame": "Errore nella creazione della nuova partita!"
 }

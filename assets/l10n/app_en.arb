@@ -12,5 +12,6 @@
   "medium": "Medium",
   "hard": "Hard",
   "pause": "Pause",
-  "resume": "Resume"
+  "resume": "Resume",
+  "errorStartingGame": "Error starting the new game!"
 }

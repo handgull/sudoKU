@@ -35,6 +35,11 @@ class HistoryEntryJTOFixtureFactory
   );
 
   @override
-  JsonFixtureDefinition<HistoryEntryJTO> jsonDefinition() =>
-      defineJson((object) => {});
+  JsonFixtureDefinition<HistoryEntryJTO> jsonDefinition() => defineJson(
+    (object) => {
+      'dateTime': object.dateTime,
+      'gameDuration': object.gameDuration,
+      'difficulty': object.difficulty,
+    },
+  );
 }
