@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 
 class Board extends StatelessWidget {
-  const Board({required this.board, super.key});
+  const Board({required this.board, required this.onCellTap, super.key});
 
   final List<List<SudokuCell>>? board;
+  final void Function(int, int) onCellTap;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,8 @@ class Board extends StatelessWidget {
                               9,
                               (_) => const SudokuCell(value: 0),
                             ),
+                    onQuadrantTap:
+                        (quadrantIndex) => onCellTap(index, quadrantIndex),
                   ),
             ),
           ),
@@ -45,8 +48,10 @@ class Board extends StatelessWidget {
 }
 
 class _SudokuQuadrant extends StatelessWidget {
-  const _SudokuQuadrant({required this.subGrid});
+  const _SudokuQuadrant({required this.subGrid, required this.onQuadrantTap});
+
   final List<SudokuCell> subGrid;
+  final void Function(int) onQuadrantTap;
 
   @override
   Widget build(BuildContext context) {
@@ -63,20 +68,25 @@ class _SudokuQuadrant extends StatelessWidget {
         ),
         itemCount: subGrid.length,
         itemBuilder:
-            (context, index) => _SudokuQuadrantCell(cell: subGrid[index]),
+            (context, index) => _SudokuQuadrantCell(
+              cell: subGrid[index],
+              onCellTap: () => onQuadrantTap(index),
+            ),
       ),
     );
   }
 }
 
 class _SudokuQuadrantCell extends StatelessWidget {
-  const _SudokuQuadrantCell({required this.cell});
+  const _SudokuQuadrantCell({required this.cell, required this.onCellTap});
+
   final SudokuCell cell;
+  final VoidCallback onCellTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {}, // TODO handle focus
+      onTap: onCellTap,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,

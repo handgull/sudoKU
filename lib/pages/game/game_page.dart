@@ -95,7 +95,14 @@ class GamePage extends StatelessWidget
                     ),
                   ],
                 ),
-                Expanded(child: Center(child: Board(board: gameData))),
+                Expanded(
+                  child: Center(
+                    child: Board(
+                      board: gameData,
+                      onCellTap: (quadrant, index) => {},
+                    ),
+                  ),
+                ),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 24),
                   child: KeyboardNumbers(),

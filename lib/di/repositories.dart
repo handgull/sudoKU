@@ -5,6 +5,7 @@ final List<RepositoryProvider<dynamic>> _repositories = [
     create:
         (context) => GameRepositoryImpl(
           gameService: context.read(),
+          sudokuCellMapper: context.read(),
           sudokuDataMapper: context.read(),
         ),
   ),
