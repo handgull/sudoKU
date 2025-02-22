@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 
 class Board extends StatelessWidget {
@@ -95,7 +96,7 @@ class _SudokuQuadrant extends StatelessWidget {
   }
 }
 
-class _SudokuQuadrantCell extends StatelessWidget {
+class _SudokuQuadrantCell extends StatelessWidget with VibrationMixin {
   const _SudokuQuadrantCell({
     required this.cell,
     required this.onCellTap,
@@ -109,7 +110,7 @@ class _SudokuQuadrantCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onCellTap,
+      onTap: () => _verifyCell(cell),
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
@@ -168,5 +169,13 @@ class _SudokuQuadrantCell extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _verifyCell(SudokuCell cell) async {
+    if (cell.editable) {
+      onCellTap();
+    } else {
+      await vibrate();
+    }
   }
 }
