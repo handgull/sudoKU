@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/blocs/game/game_bloc.dart';
+import 'package:sudoku/cubits/active_cell/active_cell_cubit.dart';
 import 'package:sudoku/cubits/theme/theme_cubit.dart';
 import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/constants.dart';
@@ -29,6 +30,7 @@ class GamePage extends StatelessWidget
       BlocProvider(
         create: (context) => GameBloc(gameRepository: context.read())..start(),
       ),
+      BlocProvider(create: (context) => ActiveCellCubit()),
     ],
     child: this,
   );
@@ -45,117 +47,136 @@ class GamePage extends StatelessWidget
             ErrorStartingGameState() => _onErrorStarting(context),
             _ => debugPrint(state.runtimeType.toString()),
           },
-      builder: (context, state) {
-        final activeDifficulty = switch (state) {
-          RunningGameState() => state.data.difficulty,
+      builder: (context, gameState) {
+        final activeDifficulty = switch (gameState) {
+          RunningGameState() => gameState.data.difficulty,
           _ => Difficulty.medium,
         };
 
-        final gameData = switch (state) {
-          RunningGameState() => state.data.board,
+        final gameData = switch (gameState) {
+          RunningGameState() => gameState.data.board,
           ErrorStartingGameState() => <List<SudokuCell>>[],
           _ => null,
         };
 
-        return Scaffold(
-          appBar: MainAppBar(
-            leading: BackButton(
-              onPressed: () {
-                if (context.router.canPop()) {
-                  context.router.maybePop();
-                } else {
-                  context.router.replace(const StatsRoute());
-                }
-              },
-            ),
-            changeMode: (mode) => context.read<ThemeCubit>().changeMode(mode),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(K.pagesPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return BlocBuilder<ActiveCellCubit, ActiveCellState>(
+          builder: (context, cellState) {
+            final activeCellIndexes = switch (cellState) {
+              ActiveActiveCellState() => cellState,
+              _ => null,
+            };
+
+            return Scaffold(
+              appBar: MainAppBar(
+                leading: BackButton(
+                  onPressed: () {
+                    if (context.router.canPop()) {
+                      context.router.maybePop();
+                    } else {
+                      context.router.replace(const StatsRoute());
+                    }
+                  },
+                ),
+                changeMode:
+                    (mode) => context.read<ThemeCubit>().changeMode(mode),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(K.pagesPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DifficultyDropdown(
-                      onDifficultyChanged: (value) {
-                        context.read<GameBloc>().start(difficulty: value);
-                      },
-                      activeDifficulty: activeDifficulty,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DifficultyDropdown(
+                          onDifficultyChanged: (value) {
+                            context.read<GameBloc>().start(difficulty: value);
+                          },
+                          activeDifficulty: activeDifficulty,
+                        ),
+                        IconButton(
+                          tooltip: context.t?.newGame,
+                          onPressed: () {
+                            context.read<GameBloc>().start(
+                              difficulty: activeDifficulty,
+                            );
+                          },
+                          icon: const Icon(Icons.restart_alt),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      tooltip: context.t?.newGame,
-                      onPressed: () {
-                        context.read<GameBloc>().start(
-                          difficulty: activeDifficulty,
-                        );
-                      },
-                      icon: const Icon(Icons.restart_alt),
+                    Expanded(
+                      child: Center(
+                        child: Board(
+                          board: gameData,
+                          activeQuadrant: activeCellIndexes?.quadrant,
+                          activeQuadrantIndex: activeCellIndexes?.index,
+                          onCellTap:
+                              (quadrant, index) => context
+                                  .read<ActiveCellCubit>()
+                                  .setActive(quadrant, index),
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 24),
+                      child: KeyboardNumbers(),
+                    ),
+                    Row(
+                      spacing: 16,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () {},
+                          style:
+                              noteMode
+                                  ? ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    foregroundColor: Colors.white,
+                                  )
+                                  : null,
+                          child: Row(
+                            spacing: 8,
+                            children: [
+                              Icon(
+                                Icons.edit_note,
+                                color: noteMode ? Colors.white : null,
+                              ),
+                              Text(
+                                noteMode
+                                    ? context.t?.notesOn ?? 'NOTES_ON'
+                                    : context.t?.notesOff ?? 'NOTES_OFF',
+                              ),
+                            ],
+                          ),
+                        ),
+                        // TODO nascondere se la active cell non è editabile
+                        OutlinedButton(
+                          onPressed: () {},
+                          child: Row(
+                            spacing: 8,
+                            children: [
+                              const Icon(Icons.edit_off),
+                              Text(context.t?.erase ?? 'ERASE'),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Expanded(
-                  child: Center(
-                    child: Board(
-                      board: gameData,
-                      onCellTap: (quadrant, index) => {},
-                    ),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 24),
-                  child: KeyboardNumbers(),
-                ),
-                Row(
-                  spacing: 16,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () {},
-                      style:
-                          noteMode
-                              ? ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundColor: Colors.white,
-                              )
-                              : null,
-                      child: Row(
-                        spacing: 8,
-                        children: [
-                          Icon(
-                            Icons.edit_note,
-                            color: noteMode ? Colors.white : null,
-                          ),
-                          Text(
-                            noteMode
-                                ? context.t?.notesOn ?? 'NOTES_ON'
-                                : context.t?.notesOff ?? 'NOTES_OFF',
-                          ),
-                        ],
-                      ),
-                    ),
-                    OutlinedButton(
-                      onPressed: () {},
-                      child: Row(
-                        spacing: 8,
-                        children: [
-                          const Icon(Icons.edit_off),
-                          Text(context.t?.erase ?? 'ERASE'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            tooltip: paused ? context.t?.resume : context.t?.pause,
-            child:
-                paused ? const Icon(Icons.play_arrow) : const Icon(Icons.pause),
-          ),
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {},
+                tooltip: paused ? context.t?.resume : context.t?.pause,
+                child:
+                    paused
+                        ? const Icon(Icons.play_arrow)
+                        : const Icon(Icons.pause),
+              ),
+            );
+          },
         );
       },
     );

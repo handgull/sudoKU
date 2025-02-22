@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 
 class Board extends StatelessWidget {
-  const Board({required this.board, required this.onCellTap, super.key});
+  const Board({
+    required this.board,
+    required this.onCellTap,
+    this.activeQuadrant,
+    this.activeQuadrantIndex,
+    super.key,
+  });
 
   final List<List<SudokuCell>>? board;
+  final int? activeQuadrant;
+  final int? activeQuadrantIndex;
   final void Function(int, int) onCellTap;
 
   @override
@@ -37,6 +45,8 @@ class Board extends StatelessWidget {
                             ),
                     onQuadrantTap:
                         (quadrantIndex) => onCellTap(index, quadrantIndex),
+                    active: activeQuadrant == index,
+                    activeQuadrantIndex: activeQuadrantIndex,
                   ),
             ),
           ),
@@ -48,9 +58,16 @@ class Board extends StatelessWidget {
 }
 
 class _SudokuQuadrant extends StatelessWidget {
-  const _SudokuQuadrant({required this.subGrid, required this.onQuadrantTap});
+  const _SudokuQuadrant({
+    required this.subGrid,
+    required this.onQuadrantTap,
+    this.active = false,
+    this.activeQuadrantIndex,
+  });
 
   final List<SudokuCell> subGrid;
+  final bool active;
+  final int? activeQuadrantIndex;
   final void Function(int) onQuadrantTap;
 
   @override
@@ -71,6 +88,7 @@ class _SudokuQuadrant extends StatelessWidget {
             (context, index) => _SudokuQuadrantCell(
               cell: subGrid[index],
               onCellTap: () => onQuadrantTap(index),
+              active: active && activeQuadrantIndex == index,
             ),
       ),
     );
@@ -78,9 +96,14 @@ class _SudokuQuadrant extends StatelessWidget {
 }
 
 class _SudokuQuadrantCell extends StatelessWidget {
-  const _SudokuQuadrantCell({required this.cell, required this.onCellTap});
+  const _SudokuQuadrantCell({
+    required this.cell,
+    required this.onCellTap,
+    this.active = false,
+  });
 
   final SudokuCell cell;
+  final bool active;
   final VoidCallback onCellTap;
 
   @override
@@ -91,9 +114,8 @@ class _SudokuQuadrantCell extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(4),
-          // TODO agganciare shadow al focus
           boxShadow:
-              false
+              active
                   ? [
                     BoxShadow(
                       color: Theme.of(context).colorScheme.primary,
