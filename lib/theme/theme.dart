@@ -35,7 +35,7 @@ class LightTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(shape: LinearBorder.none),
     ),
-    dividerTheme: DividerThemeData(color: Colors.grey[300]),
+    dividerTheme: DividerThemeData(color: Colors.grey[400]),
     inputDecorationTheme: const InputDecorationTheme(errorMaxLines: 10),
   );
 }

@@ -1,6 +1,8 @@
 import 'package:data_fixture_dart/data_fixture_dart.dart';
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
 
+import 'sudoku_cell_jto_fixture_factory.dart';
+
 extension SudokuDataJTOFixture on SudokuDataJTO {
   static SudokuDataJTOFixtureFactory factory() => SudokuDataJTOFixtureFactory();
 }
@@ -10,27 +12,17 @@ class SudokuDataJTOFixtureFactory extends JsonFixtureFactory<SudokuDataJTO> {
   FixtureDefinition<SudokuDataJTO> definition() => define(
     (faker) => SudokuDataJTO(
       board: faker.randomGenerator
-          .amount<List<int>>(
-            (_) => faker.randomGenerator
-                .amount<int>(
-                  (_) => faker.randomGenerator.integer(9, min: 1),
-                  9,
-                  min: 9,
-                )
-                .toList(growable: false),
+          .amount(
+            (_) =>
+                SudokuCellJTOFixture.factory().makeMany(9, growableList: false),
             9,
             min: 9,
           )
           .toList(growable: false),
       solution: faker.randomGenerator
-          .amount<List<int>>(
-            (_) => faker.randomGenerator
-                .amount<int>(
-                  (_) => faker.randomGenerator.integer(9, min: 1),
-                  9,
-                  min: 9,
-                )
-                .toList(growable: false),
+          .amount(
+            (_) =>
+                SudokuCellJTOFixture.factory().makeMany(9, growableList: false),
             9,
             min: 9,
           )

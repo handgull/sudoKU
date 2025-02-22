@@ -3,12 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:mockito/mockito.dart' as _i1;
-import 'package:sudoku/models/sudoku_data/sudoku_data.dart' as _i2;
-import 'package:sudoku/repositories/mappers/sudoku_data.dart' as _i4;
-import 'package:sudoku/services/game_service.dart' as _i5;
+import 'package:mockito/mockito.dart' as _i2;
+import 'package:pine/pine.dart' as _i1;
+import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart' as _i7;
+import 'package:sudoku/models/sudoku_data/sudoku_data.dart' as _i3;
+import 'package:sudoku/repositories/mappers/sudoku_data_mapper.dart' as _i5;
+import 'package:sudoku/services/game_service.dart' as _i8;
+import 'package:sudoku/services/network/jto/sudoku_cell/sudoku_cell_jto.dart'
+    as _i6;
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart'
-    as _i3;
+    as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,65 +28,82 @@ import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeSudokuData_0 extends _i1.SmartFake implements _i2.SudokuData {
-  _FakeSudokuData_0(Object parent, Invocation parentInvocation)
+class _FakeDTOMapper_0<Source extends _i1.DTO, Model> extends _i2.SmartFake
+    implements _i1.DTOMapper<Source, Model> {
+  _FakeDTOMapper_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSudokuDataJTO_1 extends _i1.SmartFake implements _i3.SudokuDataJTO {
-  _FakeSudokuDataJTO_1(Object parent, Invocation parentInvocation)
+class _FakeSudokuData_1 extends _i2.SmartFake implements _i3.SudokuData {
+  _FakeSudokuData_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeSudokuDataJTO_2 extends _i2.SmartFake implements _i4.SudokuDataJTO {
+  _FakeSudokuDataJTO_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 /// A class which mocks [SudokuDataMapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSudokuDataMapper extends _i1.Mock implements _i4.SudokuDataMapper {
+class MockSudokuDataMapper extends _i2.Mock implements _i5.SudokuDataMapper {
   MockSudokuDataMapper() {
-    _i1.throwOnMissingStub(this);
+    _i2.throwOnMissingStub(this);
   }
 
   @override
-  _i2.SudokuData fromDTO(_i3.SudokuDataJTO? dto) =>
+  _i1.DTOMapper<_i6.SudokuCellJTO, _i7.SudokuCell> get sudokuCellMapper =>
+      (super.noSuchMethod(
+            Invocation.getter(#sudokuCellMapper),
+            returnValue: _FakeDTOMapper_0<_i6.SudokuCellJTO, _i7.SudokuCell>(
+              this,
+              Invocation.getter(#sudokuCellMapper),
+            ),
+          )
+          as _i1.DTOMapper<_i6.SudokuCellJTO, _i7.SudokuCell>);
+
+  @override
+  _i3.SudokuData fromDTO(_i4.SudokuDataJTO? dto) =>
       (super.noSuchMethod(
             Invocation.method(#fromDTO, [dto]),
-            returnValue: _FakeSudokuData_0(
+            returnValue: _FakeSudokuData_1(
               this,
               Invocation.method(#fromDTO, [dto]),
             ),
           )
-          as _i2.SudokuData);
+          as _i3.SudokuData);
 
   @override
-  _i3.SudokuDataJTO toDTO(_i2.SudokuData? model) =>
+  _i4.SudokuDataJTO toDTO(_i3.SudokuData? model) =>
       (super.noSuchMethod(
             Invocation.method(#toDTO, [model]),
-            returnValue: _FakeSudokuDataJTO_1(
+            returnValue: _FakeSudokuDataJTO_2(
               this,
               Invocation.method(#toDTO, [model]),
             ),
           )
-          as _i3.SudokuDataJTO);
+          as _i4.SudokuDataJTO);
 }
 
 /// A class which mocks [GameService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGameService extends _i1.Mock implements _i5.GameService {
+class MockGameService extends _i2.Mock implements _i8.GameService {
   MockGameService() {
-    _i1.throwOnMissingStub(this);
+    _i2.throwOnMissingStub(this);
   }
 
   @override
-  _i3.SudokuDataJTO generate(int? emptySquares) =>
+  _i4.SudokuDataJTO generate(int? emptySquares) =>
       (super.noSuchMethod(
             Invocation.method(#generate, [emptySquares]),
-            returnValue: _FakeSudokuDataJTO_1(
+            returnValue: _FakeSudokuDataJTO_2(
               this,
               Invocation.method(#generate, [emptySquares]),
             ),
           )
-          as _i3.SudokuDataJTO);
+          as _i4.SudokuDataJTO);
 
   @override
   void checkMove() => super.noSuchMethod(

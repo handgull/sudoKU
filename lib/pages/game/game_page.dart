@@ -10,6 +10,7 @@ import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/constants.dart';
 import 'package:sudoku/mixins/snackbar_mixin.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
+import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 import 'package:sudoku/pages/game/widgets/board.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
 import 'package:sudoku/pages/game/widgets/keyboard_numbers.dart';
@@ -50,6 +51,12 @@ class GamePage extends StatelessWidget
           _ => Difficulty.medium,
         };
 
+        final gameData = switch (state) {
+          RunningGameState() => state.data.board,
+          ErrorStartingGameState() => <List<SudokuCell>>[],
+          _ => null,
+        };
+
         return Scaffold(
           appBar: MainAppBar(
             leading: BackButton(
@@ -88,7 +95,7 @@ class GamePage extends StatelessWidget
                     ),
                   ],
                 ),
-                const Expanded(child: Center(child: Board())),
+                Expanded(child: Center(child: Board(board: gameData))),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 24),
                   child: KeyboardNumbers(),
@@ -148,7 +155,6 @@ class GamePage extends StatelessWidget
   }
 
   void _onErrorStarting(BuildContext context) {
-    debugPrint('hallo');
     showSnackbar(
       context,
       backgroundColor: Colors.red,
