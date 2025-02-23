@@ -15,7 +15,6 @@ import 'package:sudoku/pages/game/widgets/board.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
 import 'package:sudoku/pages/game/widgets/game_time.dart';
 import 'package:sudoku/pages/game/widgets/keyboard_numbers.dart';
-import 'package:sudoku/routers/app_router.gr.dart';
 import 'package:sudoku/widgets/main_app_bar.dart';
 
 @RoutePage()
@@ -56,9 +55,14 @@ class GamePage extends StatelessWidget
       builder: (context, gameState) {
         final activeDifficulty = switch (gameState) {
           RunningGameState() => gameState.data.difficulty,
+          PausedGameState() => gameState.data.difficulty,
           LastInvalidGameState() => gameState.data.difficulty,
           WonGameState() => gameState.data.difficulty,
           GameOverGameState() => gameState.data.difficulty,
+          MovingGameState() => gameState.data.difficulty,
+          ErrorMovingGameState() => gameState.data.difficulty,
+          AddingNoteGameState() => gameState.data.difficulty,
+          ErrorAddingNoteGameState() => gameState.data.difficulty,
           _ => Difficulty.medium,
         };
 

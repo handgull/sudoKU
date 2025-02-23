@@ -59,6 +59,8 @@ class GameServiceImpl implements GameService {
   ) {
     if (quadrant < 0 || quadrant > 8 || index < 0 || index > 8) {
       return false;
+    } else if (value == 0) {
+      return true;
     }
 
     final row = findCellRow(quadrant, index);
