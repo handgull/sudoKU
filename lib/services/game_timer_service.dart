@@ -11,16 +11,23 @@ abstract interface class GameTimerService {
 }
 
 class GameTimerServiceImpl implements GameTimerService {
-  bool _paused = false;
+  bool _paused = true;
+  int? secondsOverride;
   final _timer = BehaviorSubject<int>.seeded(0);
   final _killSignal = PublishSubject<int>();
 
   int get _secondsElapsed => _timer.value;
 
-  Stream<int> _getInterval() => Stream.periodic(
-    const Duration(seconds: 1),
-    (_) => _secondsElapsed + 1,
-  ).takeUntil(_killSignal);
+  Stream<int> _getInterval() =>
+      Stream.periodic(const Duration(seconds: 1), (_) {
+        if (secondsOverride != null) {
+          final override = secondsOverride!;
+          secondsOverride = null;
+          return override;
+        } else {
+          return _secondsElapsed + 1;
+        }
+      }).takeUntil(_killSignal);
 
   @override
   bool get paused => _paused;
@@ -30,9 +37,12 @@ class GameTimerServiceImpl implements GameTimerService {
 
   @override
   void start() {
+    final oldPaused = _paused;
     _paused = false;
-    _timer.add(0);
-    _timer.sink.addStream(_getInterval().takeWhile((_) => !_paused));
+    secondsOverride = 0;
+    if (oldPaused) {
+      _timer.sink.addStream(_getInterval().takeWhile((_) => !_paused));
+    }
   }
 
   @override
