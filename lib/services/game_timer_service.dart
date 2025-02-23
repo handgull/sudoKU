@@ -12,22 +12,16 @@ abstract interface class GameTimerService {
 
 class GameTimerServiceImpl implements GameTimerService {
   bool _paused = true;
-  int? secondsOverride;
   final _timer = BehaviorSubject<int>.seeded(0);
   final _killSignal = PublishSubject<int>();
+  final _timeSetter = PublishSubject<int>();
 
   int get _secondsElapsed => _timer.value;
 
-  Stream<int> _getInterval() =>
-      Stream.periodic(const Duration(seconds: 1), (_) {
-        if (secondsOverride != null) {
-          final override = secondsOverride!;
-          secondsOverride = null;
-          return override;
-        } else {
-          return _secondsElapsed + 1;
-        }
-      }).takeUntil(_killSignal);
+  Stream<int> _genTimerStream() => Rx.merge([
+    _timeSetter,
+    Stream.periodic(const Duration(seconds: 1), (_) => _secondsElapsed + 1),
+  ]).takeUntil(_killSignal);
 
   @override
   bool get paused => _paused;
@@ -39,10 +33,10 @@ class GameTimerServiceImpl implements GameTimerService {
   void start() {
     final oldPaused = _paused;
     _paused = false;
-    secondsOverride = 0;
     if (oldPaused) {
-      _timer.sink.addStream(_getInterval().takeWhile((_) => !_paused));
+      _timer.sink.addStream(_genTimerStream().takeWhile((_) => !_paused));
     }
+    _timeSetter.add(0);
   }
 
   @override
@@ -50,13 +44,14 @@ class GameTimerServiceImpl implements GameTimerService {
     _paused = !_paused;
 
     if (!_paused) {
-      _timer.sink.addStream(_getInterval().takeWhile((_) => !_paused));
+      _timer.sink.addStream(_genTimerStream().takeWhile((_) => !_paused));
     }
   }
 
   @override
   Future<void> close() async {
     _killSignal.add(0);
+    _paused = true;
     await _timer.drain<dynamic>();
     await _timer.close();
   }
