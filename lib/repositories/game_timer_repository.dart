@@ -5,7 +5,7 @@ abstract interface class GameTimerRepository {
   bool get paused;
   void start();
   void togglePause();
-  void close();
+  Future<void> close();
 }
 
 class GameTimerRepositoryImpl implements GameTimerRepository {
@@ -30,7 +30,7 @@ class GameTimerRepositoryImpl implements GameTimerRepository {
   }
 
   @override
-  void close() {
-    gameTimerService.close();
+  Future<void> close() async {
+    await gameTimerService.close();
   }
 }
