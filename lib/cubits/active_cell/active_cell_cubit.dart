@@ -9,7 +9,7 @@ part 'active_cell_state.dart';
 class ActiveCellCubit extends Cubit<ActiveCellState> {
   ActiveCellCubit() : super(const ActiveCellState.activating());
 
-  FutureOr<void> setActive(int quadrant, int index) {
+  FutureOr<void> setActive(int? quadrant, int? index) {
     emit(const ActiveCellState.activating());
     try {
       emit(ActiveCellState.active(quadrant, index));

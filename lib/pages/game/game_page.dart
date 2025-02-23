@@ -117,6 +117,10 @@ class GamePage extends StatelessWidget
                       children: [
                         DifficultyDropdown(
                           onDifficultyChanged: (value) {
+                            context.read<ActiveCellCubit>().setActive(
+                              null,
+                              null,
+                            );
                             context.read<GameBloc>().start(difficulty: value);
                           },
                           activeDifficulty: activeDifficulty,
@@ -124,6 +128,10 @@ class GamePage extends StatelessWidget
                         IconButton(
                           tooltip: context.t?.newGame,
                           onPressed: () {
+                            context.read<ActiveCellCubit>().setActive(
+                              null,
+                              null,
+                            );
                             context.read<GameBloc>().start(
                               difficulty: activeDifficulty,
                             );
@@ -172,12 +180,14 @@ class GamePage extends StatelessWidget
                       padding: const EdgeInsets.only(top: 6, bottom: 24),
                       child: KeyboardNumbers(
                         onNumberTap:
-                            activeCellIndexes != null && gameData != null
+                            activeCellIndexes?.quadrant != null &&
+                                    activeCellIndexes?.index != null &&
+                                    gameData != null
                                 ? (value) {
                                   context.read<GameBloc>().move(
                                     data: gameData,
-                                    quadrant: activeCellIndexes.quadrant,
-                                    index: activeCellIndexes.index,
+                                    quadrant: activeCellIndexes!.quadrant!,
+                                    index: activeCellIndexes.index!,
                                     value: value,
                                   );
                                 }
