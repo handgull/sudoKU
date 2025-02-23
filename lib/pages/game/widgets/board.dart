@@ -223,12 +223,14 @@ class _SudokuQuadrantCell extends StatelessWidget with VibrationMixin {
                   physics: const NeverScrollableScrollPhysics(),
                   children: List.generate(9, (index) {
                     final noteValue = index + 1;
-                    return Center(
-                      child: Text(
-                        cell.notes.contains(noteValue)
-                            ? noteValue.toString()
-                            : '',
-                        style: const TextStyle(fontSize: 10),
+                    return FittedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: Text(
+                          cell.notes.contains(noteValue)
+                              ? noteValue.toString()
+                              : '',
+                        ),
                       ),
                     );
                   }),
