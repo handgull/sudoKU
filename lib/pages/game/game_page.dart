@@ -10,6 +10,7 @@ import 'package:sudoku/cubits/theme/theme_cubit.dart';
 import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/constants.dart';
 import 'package:sudoku/mixins/snackbar_mixin.dart';
+import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/pages/game/widgets/board.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
@@ -20,7 +21,7 @@ import 'package:sudoku/widgets/main_app_bar.dart';
 
 @RoutePage()
 class GamePage extends StatelessWidget
-    with SnackbarMixin
+    with SnackbarMixin, VibrationMixin
     implements AutoRouteWrapper {
   const GamePage({super.key});
 
@@ -51,23 +52,37 @@ class GamePage extends StatelessWidget
       listener:
           (context, state) => switch (state) {
             ErrorStartingGameState() => _onErrorStarting(context),
+            LastInvalidGameState() => vibrate(),
             _ => null,
           },
       builder: (context, gameState) {
         // TODO fare un hydratedcubit a parte
         final activeDifficulty = switch (gameState) {
           RunningGameState() => gameState.data.difficulty,
+          LastInvalidGameState() => gameState.data.difficulty,
+          WonGameState() => gameState.data.difficulty,
+          GameOverGameState() => gameState.data.difficulty,
           _ => Difficulty.medium,
         };
 
         final gameData = switch (gameState) {
           RunningGameState() => gameState.data,
           PausedGameState() => gameState.data,
+          LastInvalidGameState() => gameState.data,
+          WonGameState() => gameState.data,
+          GameOverGameState() => gameState.data,
           _ => null,
         };
 
-        final gamePaused = switch (gameState) {
-          PausedGameState() => true,
+        final boardStatus = switch (gameState) {
+          PausedGameState() => BoardStatus.paused,
+          WonGameState() => BoardStatus.finished,
+          GameOverGameState() => BoardStatus.finished,
+          _ => BoardStatus.running,
+        };
+
+        final lastInvalid = switch (gameState) {
+          LastInvalidGameState() => true,
           _ => false,
         };
 
@@ -121,7 +136,8 @@ class GamePage extends StatelessWidget
                       child: Center(
                         child: Board(
                           board: gameData?.board,
-                          paused: gamePaused,
+                          status: boardStatus,
+                          errorState: lastInvalid,
                           activeQuadrant: activeCellIndexes?.quadrant,
                           activeQuadrantIndex: activeCellIndexes?.index,
                           onCellTap:
@@ -143,12 +159,30 @@ class GamePage extends StatelessWidget
                           _ => null,
                         };
 
-                        return GameTime(seconds: seconds);
+                        final status = switch (gameState) {
+                          WonGameState() => GameTimeStatus.won,
+                          GameOverGameState() => GameTimeStatus.lost,
+                          _ => GameTimeStatus.waiting,
+                        };
+
+                        return GameTime(seconds: seconds, status: status);
                       },
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 6, bottom: 24),
-                      child: KeyboardNumbers(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6, bottom: 24),
+                      child: KeyboardNumbers(
+                        onNumberTap:
+                            activeCellIndexes != null && gameData != null
+                                ? (value) {
+                                  context.read<GameBloc>().move(
+                                    data: gameData,
+                                    quadrant: activeCellIndexes.quadrant,
+                                    index: activeCellIndexes.index,
+                                    value: value,
+                                  );
+                                }
+                                : null,
+                      ),
                     ),
                     Row(
                       spacing: 16,
@@ -196,15 +230,17 @@ class GamePage extends StatelessWidget
               ),
 
               floatingActionButton:
-                  gameData != null
+                  gameData != null && boardStatus != BoardStatus.finished
                       ? FloatingActionButton(
                         onPressed: () {
                           context.read<GameBloc>().togglePause(gameData);
                         },
                         tooltip:
-                            gamePaused ? context.t?.resume : context.t?.pause,
+                            boardStatus == BoardStatus.paused
+                                ? context.t?.resume
+                                : context.t?.pause,
                         child:
-                            gamePaused
+                            boardStatus == BoardStatus.paused
                                 ? const Icon(Icons.play_arrow)
                                 : const Icon(Icons.pause),
                       )

@@ -8,7 +8,7 @@ part 'sudoku_data.freezed.dart';
 class SudokuData with _$SudokuData {
   const factory SudokuData({
     required List<List<SudokuCell>> board,
-    required List<List<SudokuCell>> solution,
+    required List<List<int>> solution,
     required Difficulty difficulty,
   }) = _SudokuData;
   const SudokuData._();

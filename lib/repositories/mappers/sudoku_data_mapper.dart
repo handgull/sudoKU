@@ -18,12 +18,7 @@ class SudokuDataMapper extends DTOMapper<SudokuDataJTO, SudokuData> {
               subGrid.map(sudokuCellMapper.fromDTO).toList(growable: false),
         )
         .toList(growable: false),
-    solution: dto.solution
-        .map(
-          (subGrid) =>
-              subGrid.map(sudokuCellMapper.fromDTO).toList(growable: false),
-        )
-        .toList(growable: false),
+    solution: dto.solution,
     difficulty: Difficulty.values.firstWhere(
       (entry) => entry.value == dto.emptySquares,
       orElse: () => Difficulty.medium,
@@ -38,12 +33,7 @@ class SudokuDataMapper extends DTOMapper<SudokuDataJTO, SudokuData> {
               subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
         )
         .toList(growable: false),
-    solution: model.solution
-        .map(
-          (subGrid) =>
-              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
-        )
-        .toList(growable: false),
+    solution: model.solution,
     emptySquares: model.difficulty.value,
   );
 }

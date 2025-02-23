@@ -36,20 +36,7 @@ void main() {
                 .toList(growable: false),
           )
           .toList(growable: false),
-      solution: dto.solution
-          .map(
-            (subGrid) => subGrid
-                .map(
-                  (cellDTO) => SudokuCell(
-                    value: cellDTO.value,
-                    editable: cellDTO.editable,
-                    invalidValue: cellDTO.invalidValue,
-                    notes: cellDTO.notes,
-                  ),
-                )
-                .toList(growable: false),
-          )
-          .toList(growable: false),
+      solution: dto.solution,
       difficulty: Difficulty.values.firstWhere(
         (entry) => entry.value == dto.emptySquares,
         orElse: () => Difficulty.medium,

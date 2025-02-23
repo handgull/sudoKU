@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class KeyboardNumbers extends StatelessWidget {
-  const KeyboardNumbers({super.key});
+  const KeyboardNumbers({required this.onNumberTap, super.key});
+
+  final void Function(int)? onNumberTap;
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +17,17 @@ class KeyboardNumbers extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1 / 1,
               child: InkWell(
-                onTap: () => {},
+                onTap:
+                    onNumberTap != null ? () => onNumberTap!(index + 1) : null,
                 child: Center(
                   child: Text(
                     '${index + 1}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface.withAlpha(
+                        onNumberTap == null ? 75 : 255,
+                      ),
                     ),
                   ),
                 ),

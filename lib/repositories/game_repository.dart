@@ -8,13 +8,20 @@ import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
 
 abstract interface class GameRepository {
   SudokuData generate(Difficulty difficulty);
-  void checkMove(
+  bool checkMove(
     int quadrant,
     int index,
     int value,
     List<List<SudokuCell>> board,
   );
-  void checkGame();
+  List<List<SudokuCell>> move(
+    int quadrant,
+    int index,
+    SudokuCell cellData,
+    List<List<SudokuCell>> board,
+  );
+  bool checkCompleted(List<List<SudokuCell>> board);
+  bool checkSolved(SudokuData data);
 }
 
 class GameRepositoryImpl implements GameRepository {
@@ -48,9 +55,54 @@ class GameRepositoryImpl implements GameRepository {
               subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
         )
         .toList(growable: false);
+
     return gameService.checkMove(quadrant, index, value, boardDTO);
   }
 
   @override
-  void checkGame() {}
+  List<List<SudokuCell>> move(
+    int quadrant,
+    int index,
+    SudokuCell cellData,
+    List<List<SudokuCell>> board,
+  ) {
+    final boardDTO = board
+        .map(
+          (subGrid) =>
+              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+        )
+        .toList(growable: false);
+
+    final newBoardDTO = gameService.move(
+      quadrant,
+      index,
+      sudokuCellMapper.toDTO(cellData),
+      boardDTO,
+    );
+
+    final newBoard = newBoardDTO
+        .map((row) => row.map(sudokuCellMapper.fromDTO).toList(growable: false))
+        .toList(growable: false);
+
+    return newBoard;
+  }
+
+  @override
+  bool checkCompleted(List<List<SudokuCell>> board) {
+    final boardDTO = board
+        .map(
+          (subGrid) =>
+              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+        )
+        .toList(growable: false);
+
+    return gameService.checkCompleted(boardDTO);
+  }
+
+  @override
+  bool checkSolved(SudokuData data) {
+    final dto = sudokuDataMapper.toDTO(data);
+
+    return gameService.checkSolved(dto);
+  }
 }

@@ -2,26 +2,31 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:sudoku/extensions/localized_context.dart';
+import 'package:sudoku/misc/sudoku_cell_operations.dart';
 import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
+
+enum BoardStatus { running, paused, finished }
 
 class Board extends StatelessWidget {
   const Board({
     required this.board,
     required this.onCellTap,
     required this.restart,
+    required this.errorState,
     this.activeQuadrant,
     this.activeQuadrantIndex,
-    this.paused = false,
+    this.status = BoardStatus.running,
     super.key,
   });
 
   final List<List<SudokuCell>>? board;
-  final bool paused;
+  final BoardStatus status;
   final int? activeQuadrant;
   final int? activeQuadrantIndex;
   final void Function(int, int) onCellTap;
   final void Function() restart;
+  final bool errorState;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,7 @@ class Board extends StatelessWidget {
         alignment: AlignmentDirectional.center,
         children: [
           AbsorbPointer(
-            absorbing: paused,
+            absorbing: status != BoardStatus.running,
             child: GridView.builder(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
@@ -44,22 +49,18 @@ class Board extends StatelessWidget {
               itemCount: (board?.isNotEmpty ?? false) ? board?.length : 9,
               itemBuilder:
                   (context, index) => _SudokuQuadrant(
-                    subGrid:
-                        board != null && board!.isNotEmpty
-                            ? board![index]
-                            : List.generate(
-                              9,
-                              (_) => const SudokuCell(value: 0),
-                            ),
-                    onQuadrantTap:
-                        (quadrantIndex) => onCellTap(index, quadrantIndex),
-                    active: activeQuadrant == index,
+                    subGrid: _genQuadrant(board, index),
+                    onQuadrantTap: (cellIndex) => onCellTap(index, cellIndex),
+                    active:
+                        status == BoardStatus.running &&
+                        activeQuadrant == index,
                     activeQuadrantIndex: activeQuadrantIndex,
+                    errorState: errorState,
                   ),
             ),
           ),
           if (board == null) const CircularProgressIndicator(),
-          if (paused)
+          if (status == BoardStatus.paused)
             Positioned.fill(
               child: ClipRect(
                 child: BackdropFilter(
@@ -93,12 +94,29 @@ class Board extends StatelessWidget {
       ),
     );
   }
+
+  List<SudokuCell> _genQuadrant(
+    List<List<SudokuCell>>? board,
+    int quadrantIndex,
+  ) {
+    if (board == null || board.isEmpty) {
+      return List.generate(9, (_) => const SudokuCell(value: 0));
+    } else {
+      return List.generate(9, (cellIndex) {
+        final row = findCellRow(quadrantIndex, cellIndex);
+        final col = findCellCol(quadrantIndex, cellIndex);
+
+        return board[row][col];
+      });
+    }
+  }
 }
 
 class _SudokuQuadrant extends StatelessWidget {
   const _SudokuQuadrant({
     required this.subGrid,
     required this.onQuadrantTap,
+    required this.errorState,
     this.active = false,
     this.activeQuadrantIndex,
   });
@@ -107,6 +125,7 @@ class _SudokuQuadrant extends StatelessWidget {
   final bool active;
   final int? activeQuadrantIndex;
   final void Function(int) onQuadrantTap;
+  final bool errorState;
 
   @override
   Widget build(BuildContext context) {
@@ -127,6 +146,7 @@ class _SudokuQuadrant extends StatelessWidget {
               cell: subGrid[index],
               onCellTap: () => onQuadrantTap(index),
               active: active && activeQuadrantIndex == index,
+              errorState: errorState,
             ),
       ),
     );
@@ -137,12 +157,27 @@ class _SudokuQuadrantCell extends StatelessWidget with VibrationMixin {
   const _SudokuQuadrantCell({
     required this.cell,
     required this.onCellTap,
+    required this.errorState,
     this.active = false,
   });
 
   final SudokuCell cell;
   final bool active;
   final VoidCallback onCellTap;
+  final bool errorState;
+
+  Color? _findCellTextColor(
+    BuildContext context,
+    SudokuCell cell,
+    bool errorState,
+  ) {
+    if (cell.invalidValue && errorState) {
+      return Colors.red;
+    } else if (!cell.editable) {
+      return Theme.of(context).colorScheme.primary;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,10 +211,7 @@ class _SudokuQuadrantCell extends StatelessWidget with VibrationMixin {
                     fontSize: 24,
                     fontWeight:
                         cell.editable ? FontWeight.normal : FontWeight.bold,
-                    color:
-                        cell.editable
-                            ? Theme.of(context).colorScheme.secondary
-                            : Theme.of(context).colorScheme.primary,
+                    color: _findCellTextColor(context, cell, errorState),
                   ),
                 ),
               ),

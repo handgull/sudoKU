@@ -161,8 +161,31 @@ class MockGameService extends _i1.Mock implements _i9.GameService {
           as bool);
 
   @override
-  void checkGame() => super.noSuchMethod(
-    Invocation.method(#checkGame, []),
-    returnValueForMissingStub: null,
-  );
+  List<List<_i3.SudokuCellJTO>> move(
+    int? quadrant,
+    int? index,
+    _i3.SudokuCellJTO? cellData,
+    List<List<_i3.SudokuCellJTO>>? board,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#move, [quadrant, index, cellData, board]),
+            returnValue: <List<_i3.SudokuCellJTO>>[],
+          )
+          as List<List<_i3.SudokuCellJTO>>);
+
+  @override
+  bool checkCompleted(List<List<_i3.SudokuCellJTO>>? board) =>
+      (super.noSuchMethod(
+            Invocation.method(#checkCompleted, [board]),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  bool checkSolved(_i6.SudokuDataJTO? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#checkSolved, [data]),
+            returnValue: false,
+          )
+          as bool);
 }

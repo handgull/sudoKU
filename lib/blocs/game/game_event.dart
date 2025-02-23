@@ -6,7 +6,12 @@ sealed class GameEvent with _$GameEvent {
     @Default(Difficulty.medium) Difficulty difficulty,
   }) = StartGameEvent;
 
-  const factory GameEvent.move() = MoveGameEvent;
+  const factory GameEvent.move({
+    required SudokuData data,
+    required int quadrant,
+    required int index,
+    required int value,
+  }) = MoveGameEvent;
 
   const factory GameEvent.togglePause(SudokuData data) = TogglePauseGameEvent;
 }

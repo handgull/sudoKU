@@ -9,7 +9,7 @@ part 'sudoku_data_jto.g.dart';
 class SudokuDataJTO extends DTO with _$SudokuDataJTO {
   const factory SudokuDataJTO({
     required List<List<SudokuCellJTO>> board,
-    required List<List<SudokuCellJTO>> solution,
+    required List<List<int>> solution,
     required int emptySquares,
   }) = _SudokuDataJTO;
 

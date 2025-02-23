@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:sudoku/misc/sudoku_cell_operations.dart';
 import 'package:sudoku/services/network/jto/sudoku_cell/sudoku_cell_jto.dart';
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
 import 'package:sudoku_solver_generator/sudoku_solver_generator.dart';
@@ -10,7 +12,14 @@ abstract interface class GameService {
     int value,
     List<List<SudokuCellJTO>> board,
   );
-  void checkGame();
+  List<List<SudokuCellJTO>> move(
+    int quadrant,
+    int index,
+    SudokuCellJTO cellData,
+    List<List<SudokuCellJTO>> board,
+  );
+  bool checkCompleted(List<List<SudokuCellJTO>> board);
+  bool checkSolved(SudokuDataJTO data);
 }
 
 class GameServiceImpl implements GameService {
@@ -23,30 +32,16 @@ class GameServiceImpl implements GameService {
     final solution = sudokuGenerator.newSudokuSolved;
 
     return SudokuDataJTO(
-      board: _mapCells(board),
-      solution: _mapCells(solution),
+      board: board
+          .map(
+            (column) => column
+                .map((cell) => SudokuCellJTO(value: cell, editable: cell == 0))
+                .toList(growable: false),
+          )
+          .toList(growable: false),
+      solution: solution,
       emptySquares: emptySquares,
     );
-  }
-
-  List<List<SudokuCellJTO>> _mapCells(List<List<int>> board) {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8]
-        .map((quadrantIndex) {
-          return [0, 1, 2, 3, 4, 5, 6, 7, 8]
-              .map((cellIndex) {
-                final row = (cellIndex ~/ 3) + (quadrantIndex ~/ 3 * 3);
-                final column = (cellIndex % 3) + (quadrantIndex % 3 * 3);
-
-                final cellValue = board[row][column];
-
-                return SudokuCellJTO(
-                  value: cellValue,
-                  editable: cellValue == 0,
-                );
-              })
-              .toList(growable: false);
-        })
-        .toList(growable: false);
   }
 
   @override
@@ -60,17 +55,19 @@ class GameServiceImpl implements GameService {
       return false;
     }
 
-    final row = (quadrant ~/ 3) * 3 + (index ~/ 3);
-    final col = (quadrant % 3) * 3 + (index % 3);
+    final row = findCellRow(quadrant, index);
+    final col = findCellCol(quadrant, index);
 
     for (var c = 0; c < 9; c++) {
-      if (c != col && board[row][c].value == value) {
+      final cellValue = board[row][c].value;
+      if (c != col && cellValue == value) {
         return false;
       }
     }
 
     for (var r = 0; r < 9; r++) {
-      if (r != row && board[r][col].value == value) {
+      final cellValue = board[r][col].value;
+      if (r != row && cellValue == value) {
         return false;
       }
     }
@@ -80,14 +77,9 @@ class GameServiceImpl implements GameService {
 
     for (var r = 0; r < 3; r++) {
       for (var c = 0; c < 3; c++) {
-        final checkRow = quadrantStartRow + r;
-        final checkCol = quadrantStartCol + c;
-
-        final quadrantIndex = (checkRow ~/ 3) * 3 + (checkCol ~/ 3);
-        final cellIndex = (checkRow % 3) * 3 + (checkCol % 3);
-
-        if ((checkRow != row || checkCol != col) &&
-            board[quadrantIndex][cellIndex].value == value) {
+        final cellValue =
+            board[quadrantStartRow + r][quadrantStartCol + c].value;
+        if (r != row && c != col && cellValue == value) {
           return false;
         }
       }
@@ -97,5 +89,33 @@ class GameServiceImpl implements GameService {
   }
 
   @override
-  void checkGame() {}
+  List<List<SudokuCellJTO>> move(
+    int quadrant,
+    int index,
+    SudokuCellJTO cellData,
+    List<List<SudokuCellJTO>> board,
+  ) {
+    final row = findCellRow(quadrant, index);
+    final col = findCellCol(quadrant, index);
+
+    board[row][col] = cellData;
+    return board;
+  }
+
+  @override
+  bool checkCompleted(List<List<SudokuCellJTO>> board) =>
+      board.every((quadrant) => quadrant.every((cell) => cell.value != 0));
+
+  @override
+  bool checkSolved(SudokuDataJTO data) {
+    final expandedBoard = data.board
+        .expand((quadrant) => quadrant.expand((cell) => [cell.value]))
+        .toList(growable: false);
+
+    final expandedSolution = data.solution
+        .expand((quadrant) => quadrant.expand((cell) => [cell]))
+        .toList(growable: false);
+
+    return listEquals(expandedBoard, expandedSolution);
+  }
 }
