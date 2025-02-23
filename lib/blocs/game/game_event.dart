@@ -4,6 +4,7 @@ part of 'game_bloc.dart';
 sealed class GameEvent with _$GameEvent {
   const factory GameEvent.start({
     @Default(Difficulty.medium) Difficulty difficulty,
+    @Default(false) bool overrideCurrent,
   }) = StartGameEvent;
 
   const factory GameEvent.move({

@@ -3,7 +3,7 @@ import 'package:sudoku/services/game_timer_service.dart';
 abstract interface class GameTimerRepository {
   Stream<int> get timer;
   bool get paused;
-  void start();
+  void start([int initSeconds = 0]);
   void togglePause();
   Future<void> close();
 }
@@ -20,8 +20,8 @@ class GameTimerRepositoryImpl implements GameTimerRepository {
   Stream<int> get timer => gameTimerService.timer;
 
   @override
-  void start() {
-    gameTimerService.start();
+  void start([int initSeconds = 0]) {
+    gameTimerService.start(initSeconds);
   }
 
   @override

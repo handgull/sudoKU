@@ -3,6 +3,7 @@ import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 
 part 'sudoku_data.freezed.dart';
+part 'sudoku_data.g.dart';
 
 @freezed
 class SudokuData with _$SudokuData {
@@ -12,4 +13,7 @@ class SudokuData with _$SudokuData {
     required Difficulty difficulty,
   }) = _SudokuData;
   const SudokuData._();
+
+  factory SudokuData.fromJson(Map<String, dynamic> json) =>
+      _$SudokuDataFromJson(json);
 }

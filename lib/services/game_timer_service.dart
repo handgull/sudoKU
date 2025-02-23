@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 abstract interface class GameTimerService {
   Stream<int> get timer;
   bool get paused;
-  void start();
+  void start([int initSeconds = 0]);
   void togglePause();
   Future<void> close();
 }
@@ -30,13 +30,13 @@ class GameTimerServiceImpl implements GameTimerService {
   Stream<int> get timer => _timer.stream;
 
   @override
-  void start() {
+  void start([int initSeconds = 0]) {
     final oldPaused = _paused;
     _paused = false;
     if (oldPaused) {
       _timer.sink.addStream(_genTimerStream().takeWhile((_) => !_paused));
     }
-    _timeSetter.add(0);
+    _timeSetter.add(initSeconds);
   }
 
   @override

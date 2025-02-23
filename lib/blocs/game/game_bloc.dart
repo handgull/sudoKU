@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 import 'package:sudoku/models/sudoku_data/sudoku_data.dart';
@@ -12,7 +12,7 @@ part 'game_bloc.freezed.dart';
 part 'game_event.dart';
 part 'game_state.dart';
 
-class GameBloc extends Bloc<GameEvent, GameState> {
+class GameBloc extends HydratedBloc<GameEvent, GameState> {
   GameBloc({required this.gameRepository, required this.gameTimerRepository})
     : super(const GameState.starting()) {
     on<StartGameEvent>(_onStart);
@@ -23,8 +23,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   final GameRepository gameRepository;
   final GameTimerRepository gameTimerRepository;
 
-  void start({Difficulty difficulty = Difficulty.medium}) =>
-      add(GameEvent.start(difficulty: difficulty));
+  void start({
+    Difficulty difficulty = Difficulty.medium,
+    bool overrideCurrent = false,
+  }) => add(
+    GameEvent.start(difficulty: difficulty, overrideCurrent: overrideCurrent),
+  );
   void move({
     required SudokuData data,
     required int quadrant,
@@ -37,6 +41,20 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   FutureOr<void> _onStart(StartGameEvent event, Emitter<GameState> emit) {
     try {
+      final havePendingData = switch (state) {
+        RunningGameState() => true,
+        LastInvalidGameState() => true,
+        PausedGameState() => true,
+        ErrorTogglingPauseGameState() => true,
+        MovingGameState() => true,
+        ErrorMovingGameState() => true,
+        _ => false,
+      };
+
+      if (!event.overrideCurrent && havePendingData) {
+        return null;
+      }
+
       emit(const GameState.starting());
       final data = gameRepository.generate(event.difficulty);
       gameTimerRepository.start();
@@ -104,4 +122,23 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       emit(GameState.errorTogglingPause(event.data));
     }
   }
+
+  @override
+  GameState? fromJson(Map<String, dynamic> json) => GameState.running(
+    SudokuData.fromJson(json['sudokuData'] as Map<String, dynamic>),
+  );
+
+  @override
+  Map<String, dynamic>? toJson(GameState state) => switch (state) {
+    StartingGameState() => null,
+    ErrorStartingGameState() => null,
+    WonGameState() => null,
+    GameOverGameState() => null,
+    RunningGameState() => {'sudokuData': state.data.toJson()},
+    LastInvalidGameState() => {'sudokuData': state.data.toJson()},
+    PausedGameState() => {'sudokuData': state.data.toJson()},
+    ErrorTogglingPauseGameState() => {'sudokuData': state.data.toJson()},
+    MovingGameState() => {'sudokuData': state.data.toJson()},
+    ErrorMovingGameState() => {'sudokuData': state.data.toJson()},
+  };
 }

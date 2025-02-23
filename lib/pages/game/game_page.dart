@@ -121,7 +121,10 @@ class GamePage extends StatelessWidget
                               null,
                               null,
                             );
-                            context.read<GameBloc>().start(difficulty: value);
+                            context.read<GameBloc>().start(
+                              difficulty: value,
+                              overrideCurrent: true,
+                            );
                           },
                           activeDifficulty: activeDifficulty,
                         ),
@@ -134,6 +137,7 @@ class GamePage extends StatelessWidget
                             );
                             context.read<GameBloc>().start(
                               difficulty: activeDifficulty,
+                              overrideCurrent: true,
                             );
                           },
                           icon: const Icon(Icons.restart_alt),
