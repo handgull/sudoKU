@@ -124,16 +124,21 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
   }
 
   @override
-  GameState? fromJson(Map<String, dynamic> json) => GameState.running(
-    SudokuData.fromJson(json['sudokuData'] as Map<String, dynamic>),
-  );
+  GameState? fromJson(Map<String, dynamic> json) {
+    if (json.containsKey('sudokuData')) {
+      return GameState.running(
+        SudokuData.fromJson(json['sudokuData'] as Map<String, dynamic>),
+      );
+    }
+    return null;
+  }
 
   @override
   Map<String, dynamic>? toJson(GameState state) => switch (state) {
-    StartingGameState() => null,
-    ErrorStartingGameState() => null,
-    WonGameState() => null,
-    GameOverGameState() => null,
+    StartingGameState() => {},
+    ErrorStartingGameState() => {},
+    WonGameState() => {},
+    GameOverGameState() => {},
     RunningGameState() => {'sudokuData': state.data.toJson()},
     LastInvalidGameState() => {'sudokuData': state.data.toJson()},
     PausedGameState() => {'sudokuData': state.data.toJson()},

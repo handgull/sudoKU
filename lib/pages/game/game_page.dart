@@ -228,7 +228,19 @@ class GamePage extends StatelessWidget
                           ),
                         ),
                         OutlinedButton(
-                          onPressed: () {},
+                          onPressed:
+                              activeCellIndexes?.quadrant != null &&
+                                      activeCellIndexes?.index != null &&
+                                      gameData != null
+                                  ? () {
+                                    context.read<GameBloc>().move(
+                                      data: gameData,
+                                      quadrant: activeCellIndexes!.quadrant!,
+                                      index: activeCellIndexes.index!,
+                                      value: 0,
+                                    );
+                                  }
+                                  : null,
                           child: Row(
                             spacing: 8,
                             children: [
@@ -258,7 +270,7 @@ class GamePage extends StatelessWidget
                                 ? const Icon(Icons.play_arrow)
                                 : const Icon(Icons.pause),
                       )
-                      : const FloatingActionButton(onPressed: null),
+                      : null,
             );
           },
         );
