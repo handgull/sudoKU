@@ -15,4 +15,11 @@ sealed class GameEvent with _$GameEvent {
   }) = MoveGameEvent;
 
   const factory GameEvent.togglePause(SudokuData data) = TogglePauseGameEvent;
+
+  const factory GameEvent.addNote({
+    required SudokuData data,
+    required int quadrant,
+    required int index,
+    required int value,
+  }) = AddNoteGameEvent;
 }

@@ -20,6 +20,12 @@ abstract interface class GameService {
   );
   bool checkCompleted(List<List<SudokuCellJTO>> board);
   bool checkSolved(SudokuDataJTO data);
+  List<List<SudokuCellJTO>> addNote(
+    int quadrant,
+    int index,
+    int value,
+    List<List<SudokuCellJTO>> board,
+  );
 }
 
 class GameServiceImpl implements GameService {
@@ -117,5 +123,22 @@ class GameServiceImpl implements GameService {
         .toList(growable: false);
 
     return listEquals(expandedBoard, expandedSolution);
+  }
+
+  @override
+  List<List<SudokuCellJTO>> addNote(
+    int quadrant,
+    int index,
+    int value,
+    List<List<SudokuCellJTO>> board,
+  ) {
+    final row = findCellRow(quadrant, index);
+    final col = findCellCol(quadrant, index);
+
+    board[row][col] = board[row][col].copyWith(
+      notes: {...board[row][col].notes, value},
+    );
+
+    return board;
   }
 }

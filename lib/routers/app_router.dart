@@ -10,9 +10,5 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
       path: '/',
     ),
-    CustomRoute<StatsRoute>(
-      page: StatsRoute.page,
-      transitionsBuilder: TransitionsBuilders.slideRightWithFade,
-    ),
   ];
 }

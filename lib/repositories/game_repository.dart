@@ -22,6 +22,12 @@ abstract interface class GameRepository {
   );
   bool checkCompleted(List<List<SudokuCell>> board);
   bool checkSolved(SudokuData data);
+  List<List<SudokuCell>> addNote(
+    int quadrant,
+    int index,
+    int value,
+    List<List<SudokuCell>> board,
+  );
 }
 
 class GameRepositoryImpl implements GameRepository {
@@ -104,5 +110,28 @@ class GameRepositoryImpl implements GameRepository {
     final dto = sudokuDataMapper.toDTO(data);
 
     return gameService.checkSolved(dto);
+  }
+
+  @override
+  List<List<SudokuCell>> addNote(
+    int quadrant,
+    int index,
+    int value,
+    List<List<SudokuCell>> board,
+  ) {
+    final boardDTO = board
+        .map(
+          (subGrid) =>
+              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+        )
+        .toList(growable: false);
+
+    final newBoardDTO = gameService.addNote(quadrant, index, value, boardDTO);
+
+    final newBoard = newBoardDTO
+        .map((row) => row.map(sudokuCellMapper.fromDTO).toList(growable: false))
+        .toList(growable: false);
+
+    return newBoard;
   }
 }

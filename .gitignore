@@ -51,6 +51,7 @@ app.*.map.json
 **/*.g.dart
 **/*.gr.dart
 **/*.freezed.dart
+**/*.mocks.dart
 
 # mason
 .mason/

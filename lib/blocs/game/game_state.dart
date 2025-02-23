@@ -22,4 +22,9 @@ sealed class GameState with _$GameState {
   const factory GameState.moving(SudokuData data) = MovingGameState;
 
   const factory GameState.errorMoving(SudokuData data) = ErrorMovingGameState;
+
+  const factory GameState.addingNote(SudokuData data) = AddingNoteGameState;
+
+  const factory GameState.errorAddingNote(SudokuData data) =
+      ErrorAddingNoteGameState;
 }

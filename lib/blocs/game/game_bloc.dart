@@ -18,6 +18,7 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     on<StartGameEvent>(_onStart);
     on<MoveGameEvent>(_onMove);
     on<TogglePauseGameEvent>(_onTogglePause);
+    on<AddNoteGameEvent>(_onAddNote);
   }
 
   final GameRepository gameRepository;
@@ -38,6 +39,19 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     GameEvent.move(data: data, quadrant: quadrant, index: index, value: value),
   );
   void togglePause(SudokuData data) => add(GameEvent.togglePause(data));
+  void addNote({
+    required SudokuData data,
+    required int quadrant,
+    required int index,
+    required int value,
+  }) => add(
+    GameEvent.addNote(
+      data: data,
+      quadrant: quadrant,
+      index: index,
+      value: value,
+    ),
+  );
 
   FutureOr<void> _onStart(StartGameEvent event, Emitter<GameState> emit) {
     try {
@@ -123,6 +137,23 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     }
   }
 
+  FutureOr<void> _onAddNote(AddNoteGameEvent event, Emitter<GameState> emit) {
+    try {
+      emit(GameState.addingNote(event.data));
+      final newBoard = gameRepository.addNote(
+        event.quadrant,
+        event.index,
+        event.value,
+        event.data.board,
+      );
+      final data = event.data.copyWith(board: newBoard);
+
+      emit(GameState.running(data));
+    } on Exception catch (_) {
+      emit(GameState.errorAddingNote(event.data));
+    }
+  }
+
   @override
   GameState? fromJson(Map<String, dynamic> json) {
     if (json.containsKey('sudokuData')) {
@@ -145,5 +176,7 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     ErrorTogglingPauseGameState() => {'sudokuData': state.data.toJson()},
     MovingGameState() => {'sudokuData': state.data.toJson()},
     ErrorMovingGameState() => {'sudokuData': state.data.toJson()},
+    AddingNoteGameState() => {'sudokuData': state.data.toJson()},
+    ErrorAddingNoteGameState() => {'sudokuData': state.data.toJson()},
   };
 }
