@@ -185,7 +185,7 @@ class GamePage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(
                                 top: 6,
-                                bottom: 24,
+                                bottom: kFloatingActionButtonMargin + 72,
                               ),
                               child: KeyboardNumbers(
                                 // TODO refactor in una funzione che ritorna Function(int)?
@@ -217,72 +217,6 @@ class GamePage extends StatelessWidget
                                     : null,
                               ),
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                OutlinedButton(
-                                  onPressed: () {
-                                    context.read<NotesModeCubit>().toggleMode();
-                                  },
-                                  style: notesModeState.enabled
-                                      ? ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Theme.of(context).primaryColor,
-                                          foregroundColor: Colors.white,
-                                        )
-                                      : null,
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 6),
-                                        child: Icon(
-                                          Icons.edit_note,
-                                          color: notesModeState.enabled
-                                              ? Colors.white
-                                              : null,
-                                        ),
-                                      ),
-                                      Text(
-                                        notesModeState.enabled
-                                            ? context.t?.notesOn ?? 'NOTES_ON'
-                                            : context.t?.notesOff ??
-                                                'NOTES_OFF',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8),
-                                  child: OutlinedButton(
-                                    onPressed: activeCellIndexes?.quadrant !=
-                                                null &&
-                                            activeCellIndexes?.index != null &&
-                                            gameData != null
-                                        ? () {
-                                            context.read<GameBloc>().move(
-                                                  data: gameData,
-                                                  quadrant: activeCellIndexes!
-                                                      .quadrant!,
-                                                  index:
-                                                      activeCellIndexes.index!,
-                                                  value: 0,
-                                                );
-                                          }
-                                        : null,
-                                    child: Row(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.only(right: 6),
-                                          child: Icon(Icons.edit_off),
-                                        ),
-                                        Text(context.t?.erase ?? 'ERASE'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ],
                         );
                       },
@@ -290,20 +224,91 @@ class GamePage extends StatelessWidget
                   ],
                 ),
               ),
-              floatingActionButton:
-                  gameData != null && boardStatus != BoardStatus.finished
-                      ? FloatingActionButton(
-                          onPressed: () {
-                            context.read<GameBloc>().togglePause(gameData);
-                          },
-                          tooltip: boardStatus == BoardStatus.paused
-                              ? context.t?.resume
-                              : context.t?.pause,
-                          child: boardStatus == BoardStatus.paused
-                              ? const Icon(Icons.play_arrow)
-                              : const Icon(Icons.pause),
-                        )
-                      : null,
+              floatingActionButton: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  BlocBuilder<NotesModeCubit, NotesModeState>(
+                    builder: (context, notesModeState) {
+                      return Row(
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              context.read<NotesModeCubit>().toggleMode();
+                            },
+                            style: notesModeState.enabled
+                                ? ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    foregroundColor: Colors.white,
+                                  )
+                                : null,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 6),
+                                  child: Icon(
+                                    Icons.edit_note,
+                                    color: notesModeState.enabled
+                                        ? Colors.white
+                                        : null,
+                                  ),
+                                ),
+                                Text(
+                                  notesModeState.enabled
+                                      ? context.t?.notesOn ?? 'NOTES_ON'
+                                      : context.t?.notesOff ?? 'NOTES_OFF',
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: OutlinedButton(
+                              onPressed: activeCellIndexes?.quadrant != null &&
+                                      activeCellIndexes?.index != null &&
+                                      gameData != null
+                                  ? () {
+                                      context.read<GameBloc>().move(
+                                            data: gameData,
+                                            quadrant:
+                                                activeCellIndexes!.quadrant!,
+                                            index: activeCellIndexes.index!,
+                                            value: 0,
+                                          );
+                                    }
+                                  : null,
+                              child: Row(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(right: 6),
+                                    child: Icon(Icons.edit_off),
+                                  ),
+                                  Text(context.t?.erase ?? 'ERASE'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  if (gameData != null && boardStatus != BoardStatus.finished)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 32),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          context.read<GameBloc>().togglePause(gameData);
+                        },
+                        tooltip: boardStatus == BoardStatus.paused
+                            ? context.t?.resume
+                            : context.t?.pause,
+                        child: boardStatus == BoardStatus.paused
+                            ? const Icon(Icons.play_arrow)
+                            : const Icon(Icons.pause),
+                      ),
+                    ),
+                ],
+              ),
             );
           },
         );
