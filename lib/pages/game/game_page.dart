@@ -27,35 +27,33 @@ class GamePage extends StatelessWidget
   // are connected with the page lifecycle (but the repositories are global)
   @override
   Widget wrappedRoute(BuildContext context) => MultiBlocProvider(
-    providers: [
-      BlocProvider(
-        create:
-            (context) => GameBloc(
+        providers: [
+          BlocProvider(
+            create: (context) => GameBloc(
               gameRepository: context.read(),
               gameTimerRepository: context.read(),
             )..start(),
-      ),
-      BlocProvider(create: (context) => ActiveCellCubit()),
-      BlocProvider(
-        create:
-            (context) => GameTimerCubit(gameTimerRepository: context.read()),
-      ),
-      BlocProvider(create: (_) => NotesModeCubit()),
-    ],
-    child: this,
-  );
+          ),
+          BlocProvider(create: (context) => ActiveCellCubit()),
+          BlocProvider(
+            create: (context) =>
+                GameTimerCubit(gameTimerRepository: context.read()),
+          ),
+          BlocProvider(create: (_) => NotesModeCubit()),
+        ],
+        child: this,
+      );
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<GameBloc, GameState>(
       // In this demo is used the dart 3 pattern matching to handle states
       // before dart 3 this was done with some freezed methods or manually
-      listener:
-          (context, state) => switch (state) {
-            ErrorStartingGameState() => _onErrorStarting(context),
-            LastInvalidGameState() => vibrate(),
-            _ => null,
-          },
+      listener: (context, state) => switch (state) {
+        ErrorStartingGameState() => _onErrorStarting(context),
+        LastInvalidGameState() => vibrate(),
+        _ => null,
+      },
       builder: (context, gameState) {
         final activeDifficulty = switch (gameState) {
           RunningGameState() => gameState.data.difficulty,
@@ -105,8 +103,8 @@ class GamePage extends StatelessWidget
             return Scaffold(
               appBar: MainAppBar(
                 leading: const Icon(Icons.calculate, color: Colors.redAccent),
-                changeMode:
-                    (mode) => context.read<ThemeCubit>().changeMode(mode),
+                changeMode: (mode) =>
+                    context.read<ThemeCubit>().changeMode(mode),
               ),
               body: Padding(
                 padding: const EdgeInsets.all(K.pagesPadding),
@@ -118,13 +116,13 @@ class GamePage extends StatelessWidget
                         DifficultyDropdown(
                           onDifficultyChanged: (value) {
                             context.read<ActiveCellCubit>().setActive(
-                              null,
-                              null,
-                            );
+                                  null,
+                                  null,
+                                );
                             context.read<GameBloc>().start(
-                              difficulty: value,
-                              overrideCurrent: true,
-                            );
+                                  difficulty: value,
+                                  overrideCurrent: true,
+                                );
                           },
                           activeDifficulty: activeDifficulty,
                         ),
@@ -132,13 +130,13 @@ class GamePage extends StatelessWidget
                           tooltip: context.t?.newGame,
                           onPressed: () {
                             context.read<ActiveCellCubit>().setActive(
-                              null,
-                              null,
-                            );
+                                  null,
+                                  null,
+                                );
                             context.read<GameBloc>().start(
-                              difficulty: activeDifficulty,
-                              overrideCurrent: true,
-                            );
+                                  difficulty: activeDifficulty,
+                                  overrideCurrent: true,
+                                );
                           },
                           icon: const Icon(Icons.restart_alt),
                         ),
@@ -152,10 +150,9 @@ class GamePage extends StatelessWidget
                           errorState: lastInvalid,
                           activeQuadrant: activeCellIndexes?.quadrant,
                           activeQuadrantIndex: activeCellIndexes?.index,
-                          onCellTap:
-                              (quadrant, index) => context
-                                  .read<ActiveCellCubit>()
-                                  .setActive(quadrant, index),
+                          onCellTap: (quadrant, index) => context
+                              .read<ActiveCellCubit>()
+                              .setActive(quadrant, index),
                           restart: () {
                             if (gameData != null) {
                               context.read<GameBloc>().togglePause(gameData);
@@ -192,59 +189,59 @@ class GamePage extends StatelessWidget
                               ),
                               child: KeyboardNumbers(
                                 // TODO refactor in una funzione che ritorna Function(int)?
-                                onNumberTap:
-                                    activeCellIndexes?.quadrant != null &&
-                                            activeCellIndexes?.index != null &&
-                                            gameData != null
-                                        ? notesModeState.enabled
-                                            ? (value) {
-                                              context.read<GameBloc>().addNote(
-                                                data: gameData,
-                                                quadrant:
-                                                    activeCellIndexes!
-                                                        .quadrant!,
-                                                index: activeCellIndexes.index!,
-                                                value: value,
-                                              );
-                                            }
-                                            : (value) {
-                                              context.read<GameBloc>().move(
-                                                data: gameData,
-                                                quadrant:
-                                                    activeCellIndexes!
-                                                        .quadrant!,
-                                                index: activeCellIndexes.index!,
-                                                value: value,
-                                              );
-                                            }
-                                        : null,
+                                onNumberTap: activeCellIndexes?.quadrant !=
+                                            null &&
+                                        activeCellIndexes?.index != null &&
+                                        gameData != null
+                                    ? notesModeState.enabled
+                                        ? (value) {
+                                            context.read<GameBloc>().addNote(
+                                                  data: gameData,
+                                                  quadrant: activeCellIndexes!
+                                                      .quadrant!,
+                                                  index:
+                                                      activeCellIndexes.index!,
+                                                  value: value,
+                                                );
+                                          }
+                                        : (value) {
+                                            context.read<GameBloc>().move(
+                                                  data: gameData,
+                                                  quadrant: activeCellIndexes!
+                                                      .quadrant!,
+                                                  index:
+                                                      activeCellIndexes.index!,
+                                                  value: value,
+                                                );
+                                          }
+                                    : null,
                               ),
                             ),
                             Row(
-                              spacing: 16,
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 OutlinedButton(
                                   onPressed: () {
                                     context.read<NotesModeCubit>().toggleMode();
                                   },
-                                  style:
-                                      notesModeState.enabled
-                                          ? ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                Theme.of(context).primaryColor,
-                                            foregroundColor: Colors.white,
-                                          )
-                                          : null,
+                                  style: notesModeState.enabled
+                                      ? ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          foregroundColor: Colors.white,
+                                        )
+                                      : null,
                                   child: Row(
-                                    spacing: 8,
                                     children: [
-                                      Icon(
-                                        Icons.edit_note,
-                                        color:
-                                            notesModeState.enabled
-                                                ? Colors.white
-                                                : null,
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 6),
+                                        child: Icon(
+                                          Icons.edit_note,
+                                          color: notesModeState.enabled
+                                              ? Colors.white
+                                              : null,
+                                        ),
                                       ),
                                       Text(
                                         notesModeState.enabled
@@ -255,28 +252,33 @@ class GamePage extends StatelessWidget
                                     ],
                                   ),
                                 ),
-                                OutlinedButton(
-                                  onPressed:
-                                      activeCellIndexes?.quadrant != null &&
-                                              activeCellIndexes?.index !=
-                                                  null &&
-                                              gameData != null
-                                          ? () {
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: OutlinedButton(
+                                    onPressed: activeCellIndexes?.quadrant !=
+                                                null &&
+                                            activeCellIndexes?.index != null &&
+                                            gameData != null
+                                        ? () {
                                             context.read<GameBloc>().move(
-                                              data: gameData,
-                                              quadrant:
-                                                  activeCellIndexes!.quadrant!,
-                                              index: activeCellIndexes.index!,
-                                              value: 0,
-                                            );
+                                                  data: gameData,
+                                                  quadrant: activeCellIndexes!
+                                                      .quadrant!,
+                                                  index:
+                                                      activeCellIndexes.index!,
+                                                  value: 0,
+                                                );
                                           }
-                                          : null,
-                                  child: Row(
-                                    spacing: 8,
-                                    children: [
-                                      const Icon(Icons.edit_off),
-                                      Text(context.t?.erase ?? 'ERASE'),
-                                    ],
+                                        : null,
+                                    child: Row(
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.only(right: 6),
+                                          child: Icon(Icons.edit_off),
+                                        ),
+                                        Text(context.t?.erase ?? 'ERASE'),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -288,22 +290,19 @@ class GamePage extends StatelessWidget
                   ],
                 ),
               ),
-
               floatingActionButton:
                   gameData != null && boardStatus != BoardStatus.finished
                       ? FloatingActionButton(
-                        onPressed: () {
-                          context.read<GameBloc>().togglePause(gameData);
-                        },
-                        tooltip:
-                            boardStatus == BoardStatus.paused
-                                ? context.t?.resume
-                                : context.t?.pause,
-                        child:
-                            boardStatus == BoardStatus.paused
-                                ? const Icon(Icons.play_arrow)
-                                : const Icon(Icons.pause),
-                      )
+                          onPressed: () {
+                            context.read<GameBloc>().togglePause(gameData);
+                          },
+                          tooltip: boardStatus == BoardStatus.paused
+                              ? context.t?.resume
+                              : context.t?.pause,
+                          child: boardStatus == BoardStatus.paused
+                              ? const Icon(Icons.play_arrow)
+                              : const Icon(Icons.pause),
+                        )
                       : null,
             );
           },

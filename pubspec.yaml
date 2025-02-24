@@ -5,7 +5,7 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.5.4
 
 dependencies:
   auto_route: ^9.3.0+1
@@ -15,6 +15,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   flutter_localizations:
     sdk: flutter
+  flutter_native_splash: ^2.4.4
   freezed_annotation: ^2.4.4
   hydrated_bloc: ^9.1.5
   intl: any
@@ -28,19 +29,18 @@ dependencies:
   vibration: ^3.1.3
 
 dev_dependencies:
-  auto_route_generator: ^9.3.1
+  auto_route_generator: ^9.0.0
   bloc_test: ^9.1.7
   build_runner: any
   data_fixture_dart: ^2.2.0
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^5.0.0
-  flutter_native_splash: ^2.4.5
   flutter_test:
     sdk: flutter
-  freezed: ^2.5.8
-  json_serializable: ^6.9.4
-  mockito: ^5.4.5
-  test: ^1.25.15
+  freezed: ^3.0.0-0.0.dev
+  json_serializable: ^6.9.0
+  mockito: ^5.4.4
+  test: ^1.25.7
 
 flutter:
   generate: true

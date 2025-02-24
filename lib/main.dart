@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sudoku/cubits/theme/theme_cubit.dart';
@@ -13,7 +14,9 @@ import 'package:sudoku/routers/app_router.dart';
 import 'package:sudoku/theme/theme.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // I preserve the native splash screen until the app is really ready
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // I do not handle responsivness/adaptivity in this demo app
   // I choosed to support portrait only
@@ -24,11 +27,12 @@ void main() async {
 
   // This check for the web platform is optional for this app
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory:
-        kIsWeb
-            ? HydratedStorage.webStorageDirectory
-            : await getTemporaryDirectory(),
+    storageDirectory: kIsWeb
+        ? HydratedStorage.webStorageDirectory
+        : await getTemporaryDirectory(),
   );
+
+  FlutterNativeSplash.remove();
 
   runApp(const App());
 }
