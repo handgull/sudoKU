@@ -1,6 +1,10 @@
-# sudoku
+# sudo...KU
 
-A simple sudoku game app
+<div align="center">
+  <img src="./preview.webp" style="max-height: 300px" />
+</div>
+
+A simple sudoku game app with some data persistance!
 
 ## Building / Developing
 
@@ -22,6 +26,7 @@ fvm flutter pub get
 ```sh
 fvm dart run build_runner watch --delete-conflicting-outputs # watcher
 fvm dart run build_runner build --delete-conflicting-outputs # simple builder
+fvm dart run build_runner clean # cleans the cache if something goes wrong
 ```
 
 ## Dependencies update

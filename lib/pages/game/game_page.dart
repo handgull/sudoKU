@@ -245,7 +245,7 @@ class GamePage extends StatelessWidget
                             child: Row(
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 6),
+                                  padding: const EdgeInsets.only(right: 3),
                                   child: Icon(
                                     Icons.edit_note,
                                     color: notesModeState.enabled
@@ -280,7 +280,7 @@ class GamePage extends StatelessWidget
                               child: Row(
                                 children: [
                                   const Padding(
-                                    padding: EdgeInsets.only(right: 6),
+                                    padding: EdgeInsets.only(right: 3),
                                     child: Icon(Icons.edit_off),
                                   ),
                                   Text(context.t?.erase ?? 'ERASE'),
@@ -294,7 +294,7 @@ class GamePage extends StatelessWidget
                   ),
                   if (gameData != null && boardStatus != BoardStatus.finished)
                     Padding(
-                      padding: const EdgeInsets.only(left: 32),
+                      padding: const EdgeInsets.only(left: 8),
                       child: FloatingActionButton(
                         onPressed: () {
                           context.read<GameBloc>().togglePause(gameData);

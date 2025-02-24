@@ -14,7 +14,7 @@ part 'game_state.dart';
 
 class GameBloc extends HydratedBloc<GameEvent, GameState> {
   GameBloc({required this.gameRepository, required this.gameTimerRepository})
-    : super(const GameState.starting()) {
+      : super(const GameState.starting()) {
     on<StartGameEvent>(_onStart);
     on<MoveGameEvent>(_onMove);
     on<TogglePauseGameEvent>(_onTogglePause);
@@ -27,31 +27,42 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
   void start({
     Difficulty difficulty = Difficulty.medium,
     bool overrideCurrent = false,
-  }) => add(
-    GameEvent.start(difficulty: difficulty, overrideCurrent: overrideCurrent),
-  );
+  }) =>
+      add(
+        GameEvent.start(
+          difficulty: difficulty,
+          overrideCurrent: overrideCurrent,
+        ),
+      );
   void move({
     required SudokuData data,
     required int quadrant,
     required int index,
     required int value,
-  }) => add(
-    GameEvent.move(data: data, quadrant: quadrant, index: index, value: value),
-  );
+  }) =>
+      add(
+        GameEvent.move(
+          data: data,
+          quadrant: quadrant,
+          index: index,
+          value: value,
+        ),
+      );
   void togglePause(SudokuData data) => add(GameEvent.togglePause(data));
   void addNote({
     required SudokuData data,
     required int quadrant,
     required int index,
     required int value,
-  }) => add(
-    GameEvent.addNote(
-      data: data,
-      quadrant: quadrant,
-      index: index,
-      value: value,
-    ),
-  );
+  }) =>
+      add(
+        GameEvent.addNote(
+          data: data,
+          quadrant: quadrant,
+          index: index,
+          value: value,
+        ),
+      );
 
   FutureOr<void> _onStart(StartGameEvent event, Emitter<GameState> emit) {
     try {
@@ -166,17 +177,17 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
 
   @override
   Map<String, dynamic>? toJson(GameState state) => switch (state) {
-    StartingGameState() => {},
-    ErrorStartingGameState() => {},
-    WonGameState() => {},
-    GameOverGameState() => {},
-    RunningGameState() => {'sudokuData': state.data.toJson()},
-    LastInvalidGameState() => {'sudokuData': state.data.toJson()},
-    PausedGameState() => {'sudokuData': state.data.toJson()},
-    ErrorTogglingPauseGameState() => {'sudokuData': state.data.toJson()},
-    MovingGameState() => {'sudokuData': state.data.toJson()},
-    ErrorMovingGameState() => {'sudokuData': state.data.toJson()},
-    AddingNoteGameState() => {'sudokuData': state.data.toJson()},
-    ErrorAddingNoteGameState() => {'sudokuData': state.data.toJson()},
-  };
+        StartingGameState() => {},
+        ErrorStartingGameState() => {},
+        WonGameState() => {},
+        GameOverGameState() => {},
+        RunningGameState() => {'sudokuData': state.data.toJson()},
+        LastInvalidGameState() => {'sudokuData': state.data.toJson()},
+        PausedGameState() => {'sudokuData': state.data.toJson()},
+        ErrorTogglingPauseGameState() => {'sudokuData': state.data.toJson()},
+        MovingGameState() => {'sudokuData': state.data.toJson()},
+        ErrorMovingGameState() => {'sudokuData': state.data.toJson()},
+        AddingNoteGameState() => {'sudokuData': state.data.toJson()},
+        ErrorAddingNoteGameState() => {'sudokuData': state.data.toJson()},
+      };
 }
