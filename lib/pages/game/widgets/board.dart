@@ -48,16 +48,14 @@ class Board extends StatelessWidget {
                 mainAxisSpacing: 1,
               ),
               itemCount: (board?.isNotEmpty ?? false) ? board?.length : 9,
-              itemBuilder:
-                  (context, index) => _SudokuQuadrant(
-                    subGrid: _genQuadrant(board, index),
-                    onQuadrantTap: (cellIndex) => onCellTap(index, cellIndex),
-                    active:
-                        status == BoardStatus.running &&
-                        activeQuadrant == index,
-                    activeQuadrantIndex: activeQuadrantIndex,
-                    errorState: errorState,
-                  ),
+              itemBuilder: (context, index) => _SudokuQuadrant(
+                subGrid: _genQuadrant(board, index),
+                onQuadrantTap: (cellIndex) => onCellTap(index, cellIndex),
+                active:
+                    status == BoardStatus.running && activeQuadrant == index,
+                activeQuadrantIndex: activeQuadrantIndex,
+                errorState: errorState,
+              ),
             ),
           ),
           if (board == null) const CircularProgressIndicator(),
@@ -143,13 +141,12 @@ class _SudokuQuadrant extends StatelessWidget {
           mainAxisSpacing: 3,
         ),
         itemCount: subGrid.length,
-        itemBuilder:
-            (context, index) => _SudokuQuadrantCell(
-              cell: subGrid[index],
-              onCellTap: () => onQuadrantTap(index),
-              active: active && activeQuadrantIndex == index,
-              errorState: errorState,
-            ),
+        itemBuilder: (context, index) => _SudokuQuadrantCell(
+          cell: subGrid[index],
+          onCellTap: () => onQuadrantTap(index),
+          active: active && activeQuadrantIndex == index,
+          errorState: errorState,
+        ),
       ),
     );
   }
@@ -189,19 +186,18 @@ class _SudokuQuadrantCell extends StatelessWidget with VibrationMixin {
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(4),
-          boxShadow:
-              active
-                  ? [
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.primary,
-                      blurRadius: 4,
-                    ),
-                    BoxShadow(
-                      color: Theme.of(context).primaryColor,
-                      blurRadius: 2,
-                    ),
-                  ]
-                  : null,
+          boxShadow: active
+              ? [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary,
+                    blurRadius: 4,
+                  ),
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor,
+                    blurRadius: 2,
+                  ),
+                ]
+              : null,
         ),
         child: Stack(
           children: [

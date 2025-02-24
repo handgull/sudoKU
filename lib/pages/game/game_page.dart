@@ -107,7 +107,12 @@ class GamePage extends StatelessWidget
                     context.read<ThemeCubit>().changeMode(mode),
               ),
               body: Padding(
-                padding: const EdgeInsets.all(K.pagesPadding),
+                padding: const EdgeInsets.only(
+                  top: K.pagesPadding,
+                  left: K.pagesPadding,
+                  right: K.pagesPadding,
+                  bottom: 72,
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -182,40 +187,32 @@ class GamePage extends StatelessWidget
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 6,
-                                bottom: kFloatingActionButtonMargin + 72,
-                              ),
-                              child: KeyboardNumbers(
-                                // TODO refactor in una funzione che ritorna Function(int)?
-                                onNumberTap: activeCellIndexes?.quadrant !=
-                                            null &&
-                                        activeCellIndexes?.index != null &&
-                                        gameData != null
-                                    ? notesModeState.enabled
-                                        ? (value) {
-                                            context.read<GameBloc>().addNote(
-                                                  data: gameData,
-                                                  quadrant: activeCellIndexes!
-                                                      .quadrant!,
-                                                  index:
-                                                      activeCellIndexes.index!,
-                                                  value: value,
-                                                );
-                                          }
-                                        : (value) {
-                                            context.read<GameBloc>().move(
-                                                  data: gameData,
-                                                  quadrant: activeCellIndexes!
-                                                      .quadrant!,
-                                                  index:
-                                                      activeCellIndexes.index!,
-                                                  value: value,
-                                                );
-                                          }
-                                    : null,
-                              ),
+                            KeyboardNumbers(
+                              // TODO refactor in una funzione che ritorna Function(int)?
+                              onNumberTap: activeCellIndexes?.quadrant !=
+                                          null &&
+                                      activeCellIndexes?.index != null &&
+                                      gameData != null
+                                  ? notesModeState.enabled
+                                      ? (value) {
+                                          context.read<GameBloc>().addNote(
+                                                data: gameData,
+                                                quadrant: activeCellIndexes!
+                                                    .quadrant!,
+                                                index: activeCellIndexes.index!,
+                                                value: value,
+                                              );
+                                        }
+                                      : (value) {
+                                          context.read<GameBloc>().move(
+                                                data: gameData,
+                                                quadrant: activeCellIndexes!
+                                                    .quadrant!,
+                                                index: activeCellIndexes.index!,
+                                                value: value,
+                                              );
+                                        }
+                                  : null,
                             ),
                           ],
                         );
