@@ -192,7 +192,8 @@ class GamePage extends StatelessWidget
                               onNumberTap: activeCellIndexes?.quadrant !=
                                           null &&
                                       activeCellIndexes?.index != null &&
-                                      gameData != null
+                                      gameData != null &&
+                                      boardStatus == BoardStatus.running
                                   ? notesModeState.enabled
                                       ? (value) {
                                           context.read<GameBloc>().addNote(
@@ -263,7 +264,8 @@ class GamePage extends StatelessWidget
                             child: OutlinedButton(
                               onPressed: activeCellIndexes?.quadrant != null &&
                                       activeCellIndexes?.index != null &&
-                                      gameData != null
+                                      gameData != null &&
+                                      boardStatus == BoardStatus.running
                                   ? () {
                                       context.read<GameBloc>().move(
                                             data: gameData,
