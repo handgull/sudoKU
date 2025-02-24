@@ -15,6 +15,8 @@ import 'package:sudoku/theme/theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // I do not handle responsivness/adaptivity in this demo app
+  // I choosed to support portrait only
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

@@ -23,6 +23,7 @@ part 'providers.dart';
 
 part 'repositories.dart';
 
+// Here we can see the various layers of the architecture, this is the global DI
 class DependencyInjector extends StatelessWidget {
   const DependencyInjector({required this.child, super.key});
   final Widget child;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku/extensions/localized_context.dart';
 
+// This is a dummy widget so i have decided to use callbacks.
+// This is decoupling, if i leave bloc i do not need to edit the widget
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MainAppBar({required this.changeMode, this.leading, super.key});
 

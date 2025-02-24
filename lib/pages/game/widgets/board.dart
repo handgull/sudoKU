@@ -30,8 +30,9 @@ class Board extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Theme.of(context).dividerTheme.color ?? Colors.transparent,
+    return Card(
+      clipBehavior: Clip.hardEdge, // Forced because of the border radius
+      color: Theme.of(context).dividerTheme.color,
       child: Stack(
         alignment: AlignmentDirectional.center,
         children: [
@@ -129,8 +130,9 @@ class _SudokuQuadrant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Theme.of(context).cardColor,
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: const RoundedRectangleBorder(),
       child: GridView.builder(
         shrinkWrap: true,
         padding: const EdgeInsets.all(4),

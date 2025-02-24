@@ -8,7 +8,7 @@ part 'game_timer_cubit.freezed.dart';
 part 'game_timer_state.dart';
 
 // This cubit is readonly
-// because blocs can't emit values in an aeasy way with streams
+// because blocs can't emit values in an easy way when listening to streams
 class GameTimerCubit extends HydratedCubit<GameTimerState> {
   GameTimerCubit({required this.gameTimerRepository})
     : super(const GameTimerState.initializing()) {

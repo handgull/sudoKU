@@ -15,7 +15,7 @@ class LightTheme {
     cardTheme: CardTheme(
       color: Colors.white,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: primaryColor,
@@ -35,7 +35,7 @@ class LightTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(shape: LinearBorder.none),
     ),
-    dividerTheme: DividerThemeData(color: Colors.grey[400]),
+    dividerTheme: DividerThemeData(color: Colors.grey[300]),
     inputDecorationTheme: const InputDecorationTheme(errorMaxLines: 10),
   );
 }
@@ -50,11 +50,11 @@ class DarkTheme {
       primary: primaryColor,
       secondary: secondaryColor,
     ),
-    scaffoldBackgroundColor: const Color(0xFF000000),
+    scaffoldBackgroundColor: const Color(0xFF111111),
     cardTheme: CardTheme(
       color: Colors.grey[900],
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1A237E),
@@ -80,7 +80,7 @@ class DarkTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(shape: LinearBorder.none),
     ),
-    dividerTheme: DividerThemeData(color: Colors.grey[850]),
+    dividerTheme: const DividerThemeData(color: Color(0xFF3C3C3C)),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       foregroundColor: Colors.white,
     ),

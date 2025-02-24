@@ -5,6 +5,8 @@ import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 part 'sudoku_data.freezed.dart';
 part 'sudoku_data.g.dart';
 
+// freezed is used for every model/DTO in the app
+// for his generated methods and the immutability by default of the classes
 @freezed
 class SudokuData with _$SudokuData {
   const factory SudokuData({

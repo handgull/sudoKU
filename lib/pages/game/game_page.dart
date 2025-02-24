@@ -23,6 +23,8 @@ class GamePage extends StatelessWidget
     implements AutoRouteWrapper {
   const GamePage({super.key});
 
+  // All the blocs relevant to the business logic of the game
+  // are connected with the page lifecycle (but the repositories are global)
   @override
   Widget wrappedRoute(BuildContext context) => MultiBlocProvider(
     providers: [
@@ -46,6 +48,8 @@ class GamePage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<GameBloc, GameState>(
+      // In this demo is used the dart 3 pattern matching to handle states
+      // before dart 3 this was done with some freezed methods or manually
       listener:
           (context, state) => switch (state) {
             ErrorStartingGameState() => _onErrorStarting(context),

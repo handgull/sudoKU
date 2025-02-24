@@ -5,6 +5,8 @@ import 'package:sudoku/models/sudoku_data/sudoku_data.dart';
 import 'package:sudoku/services/network/jto/sudoku_cell/sudoku_cell_jto.dart';
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
 
+// with the mapper pattern if the source of data changes
+// the internal business logic is more protected from breaking changes
 class SudokuDataMapper extends DTOMapper<SudokuDataJTO, SudokuData> {
   const SudokuDataMapper({required this.sudokuCellMapper});
 

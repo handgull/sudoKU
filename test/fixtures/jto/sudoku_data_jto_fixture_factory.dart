@@ -21,8 +21,13 @@ class SudokuDataJTOFixtureFactory extends JsonFixtureFactory<SudokuDataJTO> {
           .toList(growable: false),
       solution: faker.randomGenerator
           .amount(
-            (_) =>
-                SudokuCellJTOFixture.factory().makeMany(9, growableList: false),
+            (_) => faker.randomGenerator
+                .amount(
+                  (_) => faker.randomGenerator.integer(9, min: 1),
+                  9,
+                  min: 9,
+                )
+                .toList(growable: false),
             9,
             min: 9,
           )
