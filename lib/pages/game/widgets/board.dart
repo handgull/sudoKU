@@ -5,8 +5,9 @@ import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/sudoku_cell_operations.dart';
 import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
+import 'package:sudoku/widgets/confetti.dart';
 
-enum BoardStatus { running, paused, finished }
+enum BoardStatus { running, paused, lost, won }
 
 class Board extends StatelessWidget {
   const Board({
@@ -88,7 +89,9 @@ class Board extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+            )
+          else if (status == BoardStatus.won)
+            const Confetti(),
         ],
       ),
     );

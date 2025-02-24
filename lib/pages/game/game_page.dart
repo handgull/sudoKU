@@ -83,8 +83,8 @@ class GamePage extends StatelessWidget
 
         final boardStatus = switch (gameState) {
           PausedGameState() => BoardStatus.paused,
-          WonGameState() => BoardStatus.finished,
-          GameOverGameState() => BoardStatus.finished,
+          WonGameState() => BoardStatus.won,
+          GameOverGameState() => BoardStatus.lost,
           _ => BoardStatus.running,
         };
 
@@ -289,7 +289,9 @@ class GamePage extends StatelessWidget
                       );
                     },
                   ),
-                  if (gameData != null && boardStatus != BoardStatus.finished)
+                  if (gameData != null &&
+                      (boardStatus != BoardStatus.won &&
+                          boardStatus != BoardStatus.lost))
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
                       child: FloatingActionButton(
