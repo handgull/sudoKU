@@ -6,7 +6,7 @@ void main() {
   late GameTimerService service;
 
   setUp(() {
-    service = const GameTimerServiceImpl();
+    service = GameTimerServiceImpl();
   });
 
   /// Testing the method [start]

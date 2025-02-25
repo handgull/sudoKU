@@ -8,24 +8,32 @@ extension SudokuCellJTOFixture on SudokuCellJTO {
 class SudokuCellJTOFixtureFactory extends JsonFixtureFactory<SudokuCellJTO> {
   @override
   FixtureDefinition<SudokuCellJTO> definition() => define(
-    (faker) => SudokuCellJTO(
-      value: faker.randomGenerator.integer(9, min: 1),
-      editable: faker.randomGenerator.boolean(),
-      invalidValue: faker.randomGenerator.boolean(),
-      notes:
-          faker.randomGenerator
+        (faker) => SudokuCellJTO(
+          value: faker.randomGenerator.integer(9),
+          editable: faker.randomGenerator.boolean(),
+          invalidValue: faker.randomGenerator.boolean(),
+          notes: faker.randomGenerator
               .amount((_) => faker.randomGenerator.integer(9, min: 1), 9)
               .toSet(),
-    ),
-  );
+        ),
+      );
+
+  FixtureDefinition<SudokuCellJTO> withoutNotes() => redefine(
+        (_) => SudokuCellJTO(
+          value: faker.randomGenerator.integer(9),
+          editable: faker.randomGenerator.boolean(),
+          invalidValue: faker.randomGenerator.boolean(),
+          notes: {},
+        ),
+      );
 
   @override
   JsonFixtureDefinition<SudokuCellJTO> jsonDefinition() => defineJson(
-    (object) => {
-      'value': object.value,
-      'editable': object.editable,
-      'invalidValue': object.invalidValue,
-      'notes': object.notes,
-    },
-  );
+        (object) => {
+          'value': object.value,
+          'editable': object.editable,
+          'invalidValue': object.invalidValue,
+          'notes': object.notes,
+        },
+      );
 }

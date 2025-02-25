@@ -18,9 +18,9 @@ class GameTime extends StatelessWidget {
       child: Text(
         _findTime(seconds),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          letterSpacing: 1,
-          color: _findTextColor(status),
-        ),
+              letterSpacing: 1,
+              color: _findTextColor(status),
+            ),
       ),
     );
   }
@@ -30,10 +30,11 @@ class GameTime extends StatelessWidget {
       return '--:--';
     }
 
-    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
+    final hours = (seconds ~/ 3600).toString().padLeft(2, '0');
+    final minutes = ((seconds % 3600) ~/ 60).toString().padLeft(2, '0');
     final remainingSeconds = (seconds % 60).toString().padLeft(2, '0');
 
-    return '$minutes:$remainingSeconds';
+    return '$hours:$minutes:$remainingSeconds';
   }
 
   Color? _findTextColor(GameTimeStatus status) {
