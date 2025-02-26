@@ -191,11 +191,9 @@ class GamePage extends StatelessWidget
                             child: DeleteCellCta(
                               delete: activeCellIndexes?.quadrant != null &&
                                       activeCellIndexes?.index != null &&
-                                      gameData != null &&
                                       boardStatus == BoardStatus.running
                                   ? () {
                                       context.read<GameBloc>().move(
-                                            data: gameData,
                                             quadrant:
                                                 activeCellIndexes!.quadrant!,
                                             index: activeCellIndexes.index!,
@@ -258,7 +256,6 @@ class GamePage extends StatelessWidget
               }
             : (value) {
                 context.read<GameBloc>().move(
-                      data: data,
                       quadrant: quadrant,
                       index: index,
                       value: value,
