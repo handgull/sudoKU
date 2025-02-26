@@ -2,6 +2,7 @@ import 'package:pine/utils/dto_mapper.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 import 'package:sudoku/models/sudoku_data/sudoku_data.dart';
+import 'package:sudoku/repositories/repository.dart';
 import 'package:sudoku/services/game_service.dart';
 import 'package:sudoku/services/network/jto/sudoku_cell/sudoku_cell_jto.dart';
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
@@ -30,7 +31,7 @@ abstract interface class GameRepository {
   );
 }
 
-class GameRepositoryImpl implements GameRepository {
+class GameRepositoryImpl extends Repository implements GameRepository {
   const GameRepositoryImpl({
     required this.gameService,
     required this.sudokuCellMapper,
@@ -54,16 +55,17 @@ class GameRepositoryImpl implements GameRepository {
     int index,
     int value,
     List<List<SudokuCell>> board,
-  ) {
-    final boardDTO = board
-        .map(
-          (subGrid) =>
-              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
-        )
-        .toList(growable: false);
+  ) =>
+      safeCode(() {
+        final boardDTO = board
+            .map(
+              (subGrid) =>
+                  subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+            )
+            .toList(growable: false);
 
-    return gameService.checkMove(quadrant, index, value, boardDTO);
-  }
+        return gameService.checkMove(quadrant, index, value, boardDTO);
+      });
 
   @override
   List<List<SudokuCell>> move(
@@ -71,46 +73,50 @@ class GameRepositoryImpl implements GameRepository {
     int index,
     SudokuCell cellData,
     List<List<SudokuCell>> board,
-  ) {
-    final boardDTO = board
-        .map(
-          (subGrid) =>
-              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
-        )
-        .toList(growable: false);
+  ) =>
+      safeCode(() {
+        final boardDTO = board
+            .map(
+              (subGrid) =>
+                  subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+            )
+            .toList(growable: false);
 
-    final newBoardDTO = gameService.move(
-      quadrant,
-      index,
-      sudokuCellMapper.toDTO(cellData),
-      boardDTO,
-    );
+        final newBoardDTO = gameService.move(
+          quadrant,
+          index,
+          sudokuCellMapper.toDTO(cellData),
+          boardDTO,
+        );
 
-    final newBoard = newBoardDTO
-        .map((row) => row.map(sudokuCellMapper.fromDTO).toList(growable: false))
-        .toList(growable: false);
+        final newBoard = newBoardDTO
+            .map(
+              (row) =>
+                  row.map(sudokuCellMapper.fromDTO).toList(growable: false),
+            )
+            .toList(growable: false);
 
-    return newBoard;
-  }
-
-  @override
-  bool checkCompleted(List<List<SudokuCell>> board) {
-    final boardDTO = board
-        .map(
-          (subGrid) =>
-              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
-        )
-        .toList(growable: false);
-
-    return gameService.checkCompleted(boardDTO);
-  }
+        return newBoard;
+      });
 
   @override
-  bool checkSolved(SudokuData data) {
-    final dto = sudokuDataMapper.toDTO(data);
+  bool checkCompleted(List<List<SudokuCell>> board) => safeCode(() {
+        final boardDTO = board
+            .map(
+              (subGrid) =>
+                  subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+            )
+            .toList(growable: false);
 
-    return gameService.checkSolved(dto);
-  }
+        return gameService.checkCompleted(boardDTO);
+      });
+
+  @override
+  bool checkSolved(SudokuData data) => safeCode(() {
+        final dto = sudokuDataMapper.toDTO(data);
+
+        return gameService.checkSolved(dto);
+      });
 
   @override
   List<List<SudokuCell>> addNote(
@@ -118,20 +124,25 @@ class GameRepositoryImpl implements GameRepository {
     int index,
     int value,
     List<List<SudokuCell>> board,
-  ) {
-    final boardDTO = board
-        .map(
-          (subGrid) =>
-              subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
-        )
-        .toList(growable: false);
+  ) =>
+      safeCode(() {
+        final boardDTO = board
+            .map(
+              (subGrid) =>
+                  subGrid.map(sudokuCellMapper.toDTO).toList(growable: false),
+            )
+            .toList(growable: false);
 
-    final newBoardDTO = gameService.addNote(quadrant, index, value, boardDTO);
+        final newBoardDTO =
+            gameService.addNote(quadrant, index, value, boardDTO);
 
-    final newBoard = newBoardDTO
-        .map((row) => row.map(sudokuCellMapper.fromDTO).toList(growable: false))
-        .toList(growable: false);
+        final newBoard = newBoardDTO
+            .map(
+              (row) =>
+                  row.map(sudokuCellMapper.fromDTO).toList(growable: false),
+            )
+            .toList(growable: false);
 
-    return newBoard;
-  }
+        return newBoard;
+      });
 }

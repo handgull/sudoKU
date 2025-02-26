@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,27 +16,31 @@ import 'package:sudoku/routers/app_router.dart';
 import 'package:sudoku/theme/theme.dart';
 
 void main() async {
-  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  // I preserve the native splash screen until the app is really ready
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await runZonedGuarded(() async {
+    final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    // I preserve the native splash screen until the app is really ready
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // I do not handle responsivness/adaptivity in this demo app
-  // I choosed to support portrait only
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+    // I do not handle responsivness/adaptivity in this demo app
+    // I choosed to support portrait only
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-  // This check for the web platform is optional for this app
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb
-        ? HydratedStorage.webStorageDirectory
-        : await getTemporaryDirectory(),
-  );
+    // This check for the web platform is optional for this app
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: kIsWeb
+          ? HydratedStorage.webStorageDirectory
+          : await getTemporaryDirectory(),
+    );
 
-  FlutterNativeSplash.remove();
+    FlutterNativeSplash.remove();
 
-  runApp(const App());
+    runApp(const App());
+  }, (error, stack) {
+    // TODO handle this
+  });
 }
 
 class App extends StatefulWidget {
