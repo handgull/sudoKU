@@ -11,7 +11,7 @@ import 'package:sudoku/misc/constants.dart';
 import 'package:sudoku/mixins/snackbar_mixin.dart';
 import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
-import 'package:sudoku/pages/game/widgets/board.dart';
+import 'package:sudoku/pages/game/widgets/board/board.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
 import 'package:sudoku/pages/game/widgets/game_time.dart';
 import 'package:sudoku/pages/game/widgets/keyboard_numbers.dart';
