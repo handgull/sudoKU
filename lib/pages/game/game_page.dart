@@ -10,7 +10,7 @@ import 'package:sudoku/extensions/localized_context.dart';
 import 'package:sudoku/misc/constants.dart';
 import 'package:sudoku/mixins/snackbar_mixin.dart';
 import 'package:sudoku/mixins/vibration_mixin.dart';
-import 'package:sudoku/models/enums/difficulty.dart';
+import 'package:sudoku/models/sudoku_data/sudoku_data.dart';
 import 'package:sudoku/pages/game/widgets/board/board.dart';
 import 'package:sudoku/pages/game/widgets/cta/delete_cell_cta.dart';
 import 'package:sudoku/pages/game/widgets/cta/keyboard_numbers.dart';
@@ -57,43 +57,10 @@ class GamePage extends StatelessWidget
         _ => null,
       },
       builder: (context, gameState) {
-        final activeDifficulty = switch (gameState) {
-          RunningGameState() => gameState.data.difficulty,
-          PausedGameState() => gameState.data.difficulty,
-          LastInvalidGameState() => gameState.data.difficulty,
-          WonGameState() => gameState.data.difficulty,
-          GameOverGameState() => gameState.data.difficulty,
-          MovingGameState() => gameState.data.difficulty,
-          ErrorMovingGameState() => gameState.data.difficulty,
-          AddingNoteGameState() => gameState.data.difficulty,
-          ErrorAddingNoteGameState() => gameState.data.difficulty,
-          _ => Difficulty.medium,
-        };
-
-        final gameData = switch (gameState) {
-          RunningGameState() => gameState.data,
-          PausedGameState() => gameState.data,
-          LastInvalidGameState() => gameState.data,
-          WonGameState() => gameState.data,
-          GameOverGameState() => gameState.data,
-          MovingGameState() => gameState.data,
-          ErrorMovingGameState() => gameState.data,
-          AddingNoteGameState() => gameState.data,
-          ErrorAddingNoteGameState() => gameState.data,
-          _ => null,
-        };
-
-        final boardStatus = switch (gameState) {
-          PausedGameState() => BoardStatus.paused,
-          WonGameState() => BoardStatus.won,
-          GameOverGameState() => BoardStatus.lost,
-          _ => BoardStatus.running,
-        };
-
-        final lastInvalid = switch (gameState) {
-          LastInvalidGameState() => true,
-          _ => false,
-        };
+        // Here i save the values because they will be reused across the page
+        final activeDifficulty = findActiveDifficulty(gameState);
+        final gameData = findGameData(gameState);
+        final boardStatus = findBoardStatus(gameState);
 
         return BlocBuilder<ActiveCellCubit, ActiveCellState>(
           builder: (context, cellState) {
@@ -154,7 +121,7 @@ class GamePage extends StatelessWidget
                         child: Board(
                           board: gameData?.board,
                           status: boardStatus,
-                          errorState: lastInvalid,
+                          errorState: findLastInvalid(gameState),
                           activeQuadrant: activeCellIndexes?.quadrant,
                           activeQuadrantIndex: activeCellIndexes?.index,
                           onCellTap: (quadrant, index) => context
@@ -190,32 +157,14 @@ class GamePage extends StatelessWidget
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             KeyboardNumbers(
-                              // TODO refactor in una funzione che ritorna Function(int)?
-                              onNumberTap: activeCellIndexes?.quadrant !=
-                                          null &&
-                                      activeCellIndexes?.index != null &&
-                                      gameData != null &&
-                                      boardStatus == BoardStatus.running
-                                  ? notesModeState.enabled
-                                      ? (value) {
-                                          context.read<GameBloc>().addNote(
-                                                data: gameData,
-                                                quadrant: activeCellIndexes!
-                                                    .quadrant!,
-                                                index: activeCellIndexes.index!,
-                                                value: value,
-                                              );
-                                        }
-                                      : (value) {
-                                          context.read<GameBloc>().move(
-                                                data: gameData,
-                                                quadrant: activeCellIndexes!
-                                                    .quadrant!,
-                                                index: activeCellIndexes.index!,
-                                                value: value,
-                                              );
-                                        }
-                                  : null,
+                              onNumberTap: _onNumberTap(
+                                context: context,
+                                quadrant: activeCellIndexes?.quadrant,
+                                index: activeCellIndexes?.index,
+                                data: gameData,
+                                boardStatus: boardStatus,
+                                notesModeEnabled: notesModeState.enabled,
+                              ),
                             ),
                           ],
                         );
@@ -284,6 +233,38 @@ class GamePage extends StatelessWidget
         );
       },
     );
+  }
+
+  void Function(int)? _onNumberTap({
+    required BuildContext context,
+    required int? quadrant,
+    required int? index,
+    required SudokuData? data,
+    required BoardStatus boardStatus,
+    required bool notesModeEnabled,
+  }) {
+    return quadrant != null &&
+            index != null &&
+            data != null &&
+            boardStatus == BoardStatus.running
+        ? notesModeEnabled
+            ? (value) {
+                context.read<GameBloc>().addNote(
+                      data: data,
+                      quadrant: quadrant,
+                      index: index,
+                      value: value,
+                    );
+              }
+            : (value) {
+                context.read<GameBloc>().move(
+                      data: data,
+                      quadrant: quadrant,
+                      index: index,
+                      value: value,
+                    );
+              }
+        : null;
   }
 
   void _onErrorStarting(BuildContext context) {

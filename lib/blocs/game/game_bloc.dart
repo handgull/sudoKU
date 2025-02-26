@@ -5,12 +5,14 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 import 'package:sudoku/models/sudoku_data/sudoku_data.dart';
+import 'package:sudoku/pages/game/widgets/board/board.dart';
 import 'package:sudoku/repositories/game_repository.dart';
 import 'package:sudoku/repositories/game_timer_repository.dart';
 
 part 'game_bloc.freezed.dart';
 part 'game_event.dart';
 part 'game_state.dart';
+part 'game_state_utils.dart';
 
 class GameBloc extends HydratedBloc<GameEvent, GameState> {
   GameBloc({required this.gameRepository, required this.gameTimerRepository})
@@ -34,6 +36,7 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
           overrideCurrent: overrideCurrent,
         ),
       );
+
   void move({
     required SudokuData data,
     required int quadrant,
@@ -48,7 +51,9 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
           value: value,
         ),
       );
+
   void togglePause(SudokuData data) => add(GameEvent.togglePause(data));
+
   void addNote({
     required SudokuData data,
     required int quadrant,
