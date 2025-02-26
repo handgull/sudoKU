@@ -12,9 +12,11 @@ import 'package:sudoku/mixins/snackbar_mixin.dart';
 import 'package:sudoku/mixins/vibration_mixin.dart';
 import 'package:sudoku/models/enums/difficulty.dart';
 import 'package:sudoku/pages/game/widgets/board/board.dart';
+import 'package:sudoku/pages/game/widgets/cta/delete_cell_cta.dart';
+import 'package:sudoku/pages/game/widgets/cta/keyboard_numbers.dart';
+import 'package:sudoku/pages/game/widgets/cta/notes_mode_cta.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
 import 'package:sudoku/pages/game/widgets/game_time.dart';
-import 'package:sudoku/pages/game/widgets/keyboard_numbers.dart';
 import 'package:sudoku/widgets/main_app_bar.dart';
 
 @RoutePage()
@@ -229,40 +231,16 @@ class GamePage extends StatelessWidget
                     builder: (context, notesModeState) {
                       return Row(
                         children: [
-                          OutlinedButton(
-                            onPressed: () {
+                          NotesModeCta(
+                            toggleNotesMode: () {
                               context.read<NotesModeCubit>().toggleMode();
                             },
-                            style: notesModeState.enabled
-                                ? ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
-                                    foregroundColor: Colors.white,
-                                  )
-                                : null,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 3),
-                                  child: Icon(
-                                    Icons.edit_note,
-                                    color: notesModeState.enabled
-                                        ? Colors.white
-                                        : null,
-                                  ),
-                                ),
-                                Text(
-                                  notesModeState.enabled
-                                      ? context.t?.notesOn ?? 'NOTES_ON'
-                                      : context.t?.notesOff ?? 'NOTES_OFF',
-                                ),
-                              ],
-                            ),
+                            enabled: notesModeState.enabled,
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 8),
-                            child: OutlinedButton(
-                              onPressed: activeCellIndexes?.quadrant != null &&
+                            child: DeleteCellCta(
+                              delete: activeCellIndexes?.quadrant != null &&
                                       activeCellIndexes?.index != null &&
                                       gameData != null &&
                                       boardStatus == BoardStatus.running
@@ -276,15 +254,6 @@ class GamePage extends StatelessWidget
                                           );
                                     }
                                   : null,
-                              child: Row(
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(right: 3),
-                                    child: Icon(Icons.edit_off),
-                                  ),
-                                  Text(context.t?.erase ?? 'ERASE'),
-                                ],
-                              ),
                             ),
                           ),
                         ],
