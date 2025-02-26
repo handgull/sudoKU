@@ -11,48 +11,50 @@ abstract interface class GameTimerService {
 }
 
 class GameTimerServiceImpl implements GameTimerService {
-  bool _paused = true;
-  final _timer = BehaviorSubject<int>.seeded(0);
-  final _killSignal = PublishSubject<int>();
-  final _timeSetter = PublishSubject<int>();
-
-  int get _secondsElapsed => _timer.value;
-
-  Stream<int> _genTimerStream() => Rx.merge([
-    _timeSetter,
-    Stream.periodic(const Duration(seconds: 1), (_) => _secondsElapsed + 1),
-  ]).takeUntil(_killSignal);
+  GameTimerServiceImpl([Duration tickDuration = const Duration(seconds: 1)])
+      : _timerSubject = BehaviorSubject<int>(),
+        _tickDuration = tickDuration;
+  late final Duration _tickDuration;
+  var _running = false;
+  Timer? _ticksTimer;
+  final BehaviorSubject<int> _timerSubject;
 
   @override
-  bool get paused => _paused;
+  Stream<int> get timer => _timerSubject.stream;
 
   @override
-  Stream<int> get timer => _timer.stream;
+  bool get paused => !_running;
 
   @override
-  void start([int initSeconds = 0]) {
-    final oldPaused = _paused;
-    _paused = false;
-    if (oldPaused) {
-      _timer.sink.addStream(_genTimerStream().takeWhile((_) => !_paused));
+  void start([int initialSeconds = 0]) {
+    if (initialSeconds < 0) {
+      throw RangeError('timer needs a positive number');
     }
-    _timeSetter.add(initSeconds);
+
+    _timerSubject.value = initialSeconds;
+
+    _running = true;
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _ticksTimer?.cancel();
+    _ticksTimer = Timer.periodic(_tickDuration, (_) {
+      if (_running) {
+        _timerSubject.sink.add(_timerSubject.value + 1);
+      }
+    });
   }
 
   @override
   void togglePause() {
-    _paused = !_paused;
-
-    if (!_paused) {
-      _timer.sink.addStream(_genTimerStream().takeWhile((_) => !_paused));
-    }
+    _running = !_running;
   }
 
   @override
   Future<void> close() async {
-    _killSignal.add(0);
-    _paused = true;
-    await _timer.drain<dynamic>();
-    await _timer.close();
+    _running = false;
+    _ticksTimer?.cancel();
+    await _timerSubject.close();
   }
 }

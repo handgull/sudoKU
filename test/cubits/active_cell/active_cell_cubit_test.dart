@@ -9,7 +9,6 @@ void main() {
     cubit = ActiveCellCubit();
   });
 
-  
   /// Testing the method [setActive]
   group('when the method setActive is called', () {
     blocTest<ActiveCellCubit, ActiveCellState>(
@@ -19,7 +18,7 @@ void main() {
       },
       build: () => cubit,
       act: (cubit) {
-        cubit.setActive();
+        cubit.setActive(0, 0);
       },
       expect: () => <ActiveCellState>[
         //TODO: define the emitted ActiveCellState states
@@ -29,5 +28,4 @@ void main() {
       },
     );
   });
-  
 }

@@ -57,43 +57,19 @@ class GameServiceImpl implements GameService {
     int value,
     List<List<SudokuCellJTO>> board,
   ) {
-    if (quadrant < 0 || quadrant > 8 || index < 0 || index > 8) {
-      return false;
-    } else if (value == 0) {
-      return true;
-    }
-
     final row = findCellRow(quadrant, index);
     final col = findCellCol(quadrant, index);
+    final rawBoard = board
+        .map(
+          (quadrant) =>
+              quadrant.map((cell) => cell.value).toList(growable: false),
+        )
+        .toList(growable: false);
+    rawBoard[row][col] = value;
 
-    for (var c = 0; c < 9; c++) {
-      final cellValue = board[row][c].value;
-      if (c != col && cellValue == value) {
-        return false;
-      }
-    }
-
-    for (var r = 0; r < 9; r++) {
-      final cellValue = board[r][col].value;
-      if (r != row && cellValue == value) {
-        return false;
-      }
-    }
-
-    final quadrantStartRow = (row ~/ 3) * 3;
-    final quadrantStartCol = (col ~/ 3) * 3;
-
-    for (var r = 0; r < 3; r++) {
-      for (var c = 0; c < 3; c++) {
-        final cellValue =
-            board[quadrantStartRow + r][quadrantStartCol + c].value;
-        if (r != row && c != col && cellValue == value) {
-          return false;
-        }
-      }
-    }
-
-    return true;
+    // This utility checks all the game logic
+    // open the service tests to check my implementation
+    return SudokuUtilities.isValidConfiguration(rawBoard);
   }
 
   @override
