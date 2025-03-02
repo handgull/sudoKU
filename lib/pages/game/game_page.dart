@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/blocs/game/game_bloc.dart';
+import 'package:sudoku/blocs/hearts/hearts_bloc.dart';
 import 'package:sudoku/cubits/active_cell/active_cell_cubit.dart';
 import 'package:sudoku/cubits/game_timer/game_timer_cubit.dart';
 import 'package:sudoku/cubits/notes_mode/notes_mode_cubit.dart';
@@ -36,12 +37,13 @@ class GamePage extends StatelessWidget
               gameTimerRepository: context.read(),
             )..start(),
           ),
-          BlocProvider(create: (context) => ActiveCellCubit()),
+          BlocProvider(create: (_) => ActiveCellCubit()),
           BlocProvider(
             create: (context) =>
                 GameTimerCubit(gameTimerRepository: context.read()),
           ),
           BlocProvider(create: (_) => NotesModeCubit()),
+          BlocProvider(create: (_) => HeartsBloc()..start()),
         ],
         child: this,
       );
