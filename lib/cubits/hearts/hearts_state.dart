@@ -1,4 +1,4 @@
-part of 'hearts_bloc.dart';
+part of 'hearts_cubit.dart';
 
 @freezed
 sealed class HeartsState with _$HeartsState {

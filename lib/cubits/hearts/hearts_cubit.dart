@@ -3,32 +3,18 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
-part 'hearts_bloc.freezed.dart';
-part 'hearts_event.dart';
+part 'hearts_cubit.freezed.dart';
 part 'hearts_state.dart';
 
-class HeartsBloc extends HydratedBloc<HeartsEvent, HeartsState> {
-  HeartsBloc() : super(const HeartsState.active()) {
-    on<StartHeartsEvent>(_onStart);
-    on<ChangeLifeHeartsEvent>(_onChangeLife);
-  }
+class HeartsCubit extends HydratedCubit<HeartsState> {
+  HeartsCubit() : super(const HeartsState.active());
 
-  void start() => add(const HeartsEvent.start());
-
-  void changeLife(int damage) => add(HeartsEvent.changeLife(damage));
-
-  FutureOr<void> _onStart(
-    StartHeartsEvent event,
-    Emitter<HeartsState> emit,
-  ) {
+  FutureOr<void> start() {
     // If you switch to a remote API or a local database,
     // this method will be populated.
   }
 
-  FutureOr<void> _onChangeLife(
-    ChangeLifeHeartsEvent event,
-    Emitter<HeartsState> emit,
-  ) {
+  FutureOr<void> changeLife(int damage) {
     final hearts = switch (state) {
       ActiveHeartsState() => (state as ActiveHeartsState).hearts,
       ErrorChangingHeartsHeartsState() =>
@@ -40,7 +26,7 @@ class HeartsBloc extends HydratedBloc<HeartsEvent, HeartsState> {
     };
 
     emit(HeartsState.changingHearts(hearts));
-    final newHearts = hearts + event.damage;
+    final newHearts = hearts + damage;
     if (newHearts > 1) {
       emit(HeartsState.active(newHearts));
     } else if (newHearts == 1) {

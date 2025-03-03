@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudoku/blocs/game/game_bloc.dart';
-import 'package:sudoku/blocs/hearts/hearts_bloc.dart';
 import 'package:sudoku/cubits/active_cell/active_cell_cubit.dart';
 import 'package:sudoku/cubits/game_timer/game_timer_cubit.dart';
+import 'package:sudoku/cubits/hearts/hearts_cubit.dart';
 import 'package:sudoku/cubits/notes_mode/notes_mode_cubit.dart';
 import 'package:sudoku/cubits/theme/theme_cubit.dart';
 import 'package:sudoku/extensions/localized_context.dart';
@@ -43,7 +43,7 @@ class GamePage extends StatelessWidget
                 GameTimerCubit(gameTimerRepository: context.read()),
           ),
           BlocProvider(create: (_) => NotesModeCubit()),
-          BlocProvider(create: (_) => HeartsBloc()..start()),
+          BlocProvider(create: (_) => HeartsCubit()..start()),
         ],
         child: this,
       );
