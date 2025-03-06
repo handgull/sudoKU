@@ -14,6 +14,7 @@ import 'package:sudoku/services/game_service.dart';
 import 'package:sudoku/services/game_timer_service.dart';
 import 'package:sudoku/services/network/jto/sudoku_cell/sudoku_cell_jto.dart';
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
+import 'package:talker/talker.dart';
 
 part 'blocs.dart';
 
@@ -30,10 +31,10 @@ class DependencyInjector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DependencyInjectorHelper(
-    blocs: _blocs,
-    mappers: _mappers,
-    providers: _providers,
-    repositories: _repositories,
-    child: child,
-  );
+        blocs: _blocs,
+        mappers: _mappers,
+        providers: _providers,
+        repositories: _repositories,
+        child: child,
+      );
 }
