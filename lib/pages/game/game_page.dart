@@ -18,6 +18,7 @@ import 'package:sudoku/pages/game/widgets/cta/keyboard_numbers.dart';
 import 'package:sudoku/pages/game/widgets/cta/notes_mode_cta.dart';
 import 'package:sudoku/pages/game/widgets/difficulty_dropdown.dart';
 import 'package:sudoku/pages/game/widgets/game_time.dart';
+import 'package:sudoku/pages/game/widgets/hearts/hearts_list.dart';
 import 'package:sudoku/widgets/main_app_bar.dart';
 
 @RoutePage()
@@ -102,6 +103,7 @@ class GamePage extends StatelessWidget
                           },
                           activeDifficulty: activeDifficulty,
                         ),
+                        const HeartsList(),
                         IconButton(
                           tooltip: context.t?.newGame,
                           onPressed: () {

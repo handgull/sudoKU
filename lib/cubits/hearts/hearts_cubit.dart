@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:sudoku/misc/constants.dart';
 
 part 'hearts_cubit.freezed.dart';
 part 'hearts_state.dart';
