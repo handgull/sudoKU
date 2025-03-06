@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:sudoku/misc/constants.dart';
 
 class HeartsList extends StatelessWidget {
-  const HeartsList({super.key});
+  const HeartsList({required this.hearts, super.key});
+
+  final int hearts;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        for (var i = 0; i < K.maxHearts; i++) const _Heart(filled: true),
+        for (var i = 0; i < K.maxHearts; i++) _Heart(filled: i < hearts),
       ],
     );
   }

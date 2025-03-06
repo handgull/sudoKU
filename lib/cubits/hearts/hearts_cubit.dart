@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:sudoku/misc/constants.dart';
 
 part 'hearts_cubit.freezed.dart';
 part 'hearts_state.dart';
+part 'hearts_state_utils.dart';
 
 class HeartsCubit extends HydratedCubit<HeartsState> {
   HeartsCubit() : super(const HeartsState.active());
@@ -27,7 +29,7 @@ class HeartsCubit extends HydratedCubit<HeartsState> {
     };
 
     emit(HeartsState.changingHearts(hearts));
-    final newHearts = hearts + damage;
+    final newHearts = min(hearts + damage, K.maxHearts);
     if (newHearts > 1) {
       emit(HeartsState.active(newHearts));
     } else if (newHearts == 1) {
@@ -48,12 +50,12 @@ class HeartsCubit extends HydratedCubit<HeartsState> {
   }
 
   @override
-  Map<String, dynamic>? toJson(HeartsState state) => switch (state) {
-        ActiveHeartsState() => {'hearts': state.hearts},
-        ErrorActivatingHeartsState() => {},
-        ChangingHeartsHeartsState() => {'hearts': state.hearts},
-        ErrorChangingHeartsHeartsState() => {'hearts': state.hearts},
-        LowHeartsHeartsState() => {'hearts': state.hearts},
-        NoHeartsHeartsState() => {},
-      };
+  Map<String, dynamic>? toJson(HeartsState state) {
+    final hearts = findHearts(state);
+
+    if (hearts != null) {
+      return {'hearts': hearts};
+    }
+    return {};
+  }
 }

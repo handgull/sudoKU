@@ -21,4 +21,6 @@ sealed class GameEvent with _$GameEvent {
     required int index,
     required int value,
   }) = AddNoteGameEvent;
+
+  const factory GameEvent.noHearts() = NoHeartsGameEvent;
 }

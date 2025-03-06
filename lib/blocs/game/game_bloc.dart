@@ -21,6 +21,7 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     on<MoveGameEvent>(_onMove);
     on<TogglePauseGameEvent>(_onTogglePause);
     on<AddNoteGameEvent>(_onAddNote);
+    on<NoHeartsGameEvent>(_onNoHearts);
   }
 
   final GameRepository gameRepository;
@@ -65,6 +66,10 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
           index: index,
           value: value,
         ),
+      );
+
+  void noHearts() => add(
+        const GameEvent.noHearts(),
       );
 
   FutureOr<void> _onStart(StartGameEvent event, Emitter<GameState> emit) {
@@ -181,6 +186,15 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     } on Exception catch (_) {
       emit(GameState.errorAddingNote(event.data));
     }
+  }
+
+  FutureOr<void> _onNoHearts(NoHeartsGameEvent event, Emitter<GameState> emit) {
+    final data = findGameData(state);
+    if (data == null) {
+      return null;
+    }
+    gameTimerRepository.togglePause();
+    emit(GameState.gameOver(data));
   }
 
   @override

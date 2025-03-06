@@ -39,7 +39,7 @@ class GameTimerRepositoryImpl extends Repository
             gameTimerService.start(initSeconds);
 
             logger.log(
-              '[GameTimerRepository] The time now is started',
+              '[GameTimerRepository] The timer now is started',
               pen: AnsiPen()..green(),
             );
           } catch (error, stack) {

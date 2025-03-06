@@ -54,9 +54,10 @@ class GamePage extends StatelessWidget
     return BlocConsumer<GameBloc, GameState>(
       // In this demo is used the dart 3 pattern matching to handle states
       // before dart 3 this was done with some freezed methods or manually
-      listener: (context, state) => switch (state) {
+      listener: (context, gameState) => switch (gameState) {
         ErrorStartingGameState() => _onErrorStarting(context),
-        LastInvalidGameState() => vibrate(),
+        LastInvalidGameState() => _onLastInvalid(context),
+        StartingGameState() => _onStartingGame(context),
         _ => null,
       },
       builder: (context, gameState) {
@@ -103,7 +104,19 @@ class GamePage extends StatelessWidget
                           },
                           activeDifficulty: activeDifficulty,
                         ),
-                        const HeartsList(),
+                        BlocConsumer<HeartsCubit, HeartsState>(
+                          listener:
+                              (BuildContext context, HeartsState heartsState) =>
+                                  switch (heartsState) {
+                            NoHeartsHeartsState() => _onNoHearts(context),
+                            _ => null,
+                          },
+                          builder: (context, heartsState) {
+                            return HeartsList(
+                              hearts: findHearts(heartsState) ?? 0,
+                            );
+                          },
+                        ),
                         IconButton(
                           tooltip: context.t?.newGame,
                           onPressed: () {
@@ -122,19 +135,31 @@ class GamePage extends StatelessWidget
                     ),
                     Expanded(
                       child: Center(
-                        child: Board(
-                          board: gameData?.board,
-                          status: boardStatus,
-                          errorState: findLastInvalid(gameState),
-                          activeQuadrant: activeCellIndexes?.quadrant,
-                          activeQuadrantIndex: activeCellIndexes?.index,
-                          onCellTap: (quadrant, index) => context
-                              .read<ActiveCellCubit>()
-                              .setActive(quadrant, index),
-                          restart: () {
-                            if (gameData != null) {
-                              context.read<GameBloc>().togglePause(gameData);
-                            }
+                        child: BlocBuilder<HeartsCubit, HeartsState>(
+                          builder: (context, heartsState) {
+                            final emergency = switch (heartsState) {
+                              LowHeartsHeartsState() => true,
+                              _ => false,
+                            };
+
+                            return Board(
+                              board: gameData?.board,
+                              status: boardStatus,
+                              emergency: emergency,
+                              errorState: findLastInvalid(gameState),
+                              activeQuadrant: activeCellIndexes?.quadrant,
+                              activeQuadrantIndex: activeCellIndexes?.index,
+                              onCellTap: (quadrant, index) => context
+                                  .read<ActiveCellCubit>()
+                                  .setActive(quadrant, index),
+                              restart: () {
+                                if (gameData != null) {
+                                  context
+                                      .read<GameBloc>()
+                                      .togglePause(gameData);
+                                }
+                              },
+                            );
                           },
                         ),
                       ),
@@ -274,5 +299,18 @@ class GamePage extends StatelessWidget
       backgroundColor: Colors.red,
       message: Text(context.t?.errorStartingGame ?? 'ERROR_STARTING_GAME'),
     );
+  }
+
+  void _onLastInvalid(BuildContext context) {
+    context.read<HeartsCubit>().changeLife(-1);
+    vibrate();
+  }
+
+  void _onNoHearts(BuildContext context) {
+    context.read<GameBloc>().noHearts();
+  }
+
+  void _onStartingGame(BuildContext context) {
+    context.read<HeartsCubit>().changeLife(K.maxHearts);
   }
 }
