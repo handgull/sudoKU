@@ -42,8 +42,10 @@ class HeartsCubit extends HydratedCubit<HeartsState> {
   @override
   HeartsState? fromJson(Map<String, dynamic> json) {
     final jsonHearts = json['hearts'] as int?;
-    if (jsonHearts != null) {
+    if (jsonHearts != null && jsonHearts > 1) {
       return HeartsState.active(jsonHearts);
+    } else if (jsonHearts == 1) {
+      return HeartsState.lowHearts(jsonHearts!);
     } else {
       return const HeartsState.active();
     }

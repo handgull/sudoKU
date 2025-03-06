@@ -38,11 +38,15 @@ class _EmergencyEffectState extends State<EmergencyEffect> {
     return Stack(
       children: [
         widget.child,
-        IgnorePointer(
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: _isFlashing ? 0.25 : 0.0,
-            child: Container(color: Colors.red),
+        Positioned.fill(
+          child: ClipRect(
+            child: IgnorePointer(
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                opacity: _isFlashing ? 0.25 : 0.0,
+                child: Container(color: Colors.red),
+              ),
+            ),
           ),
         ),
       ],
