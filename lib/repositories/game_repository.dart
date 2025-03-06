@@ -48,11 +48,32 @@ class GameRepositoryImpl extends Repository implements GameRepository {
   final DTOMapper<SudokuDataJTO, SudokuData> sudokuDataMapper;
 
   @override
-  SudokuData generate(Difficulty difficulty) {
-    final dto = gameService.generate(difficulty.value);
+  SudokuData generate(Difficulty difficulty) => safeCode(() {
+        try {
+          logger.info(
+            '[GameRepository] Generating the board...',
+          );
 
-    return sudokuDataMapper.fromDTO(dto);
-  }
+          final dto = gameService.generate(difficulty.value);
+
+          final data = sudokuDataMapper.fromDTO(dto);
+          logger.log(
+            '[GameRepository] Successfully generated the board',
+            pen: AnsiPen()..green(),
+          );
+
+          return data;
+        } catch (error, stack) {
+          logger.error(
+            '[GameRepository] An error has occurred while generating: '
+            'difficulty: ${difficulty.name}',
+            error,
+            stack,
+          );
+
+          rethrow;
+        }
+      });
 
   @override
   bool checkMove(
