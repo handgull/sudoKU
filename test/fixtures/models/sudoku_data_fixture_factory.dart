@@ -11,28 +11,29 @@ extension SudokuDataFixture on SudokuData {
 class SudokuDataFixtureFactory extends FixtureFactory<SudokuData> {
   @override
   FixtureDefinition<SudokuData> definition() => define(
-    (faker) => SudokuData(
-      board: faker.randomGenerator
-          .amount(
-            (_) => SudokuCellFixture.factory().makeMany(9, growableList: false),
-            9,
-            min: 9,
-          )
-          .toList(growable: false),
-      solution: faker.randomGenerator
-          .amount(
-            (_) => faker.randomGenerator
-                .amount(
-                  (_) => faker.randomGenerator.integer(9, min: 1),
-                  9,
-                  min: 9,
-                )
-                .toList(growable: false),
-            9,
-            min: 9,
-          )
-          .toList(growable: false),
-      difficulty: faker.randomGenerator.element(Difficulty.values),
-    ),
-  );
+        (faker) => SudokuData(
+          board: faker.randomGenerator
+              .amount(
+                (_) => SudokuCellFixture.factory()
+                    .makeMany(9, growableList: false),
+                9,
+                min: 9,
+              )
+              .toList(growable: false),
+          solution: faker.randomGenerator
+              .amount(
+                (_) => faker.randomGenerator
+                    .amount(
+                      (_) => faker.randomGenerator.integer(9, min: 1),
+                      9,
+                      min: 9,
+                    )
+                    .toList(growable: false),
+                9,
+                min: 9,
+              )
+              .toList(growable: false),
+          difficulty: faker.randomGenerator.element(Difficulty.values),
+        ),
+      );
 }

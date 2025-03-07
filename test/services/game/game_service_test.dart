@@ -6,7 +6,7 @@ import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
 
 import '../../fixtures/jto/sudoku_cell_jto_fixture_factory.dart';
 import '../../fixtures/jto/sudoku_data_jto_fixture_factory.dart';
-import '../../misc/game_mechanics.dart';
+import '../../helpers/game_mechanics.dart';
 
 void main() {
   late GameService service;

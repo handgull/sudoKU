@@ -11,8 +11,13 @@ part 'game_timer_state.dart';
 // because blocs can't emit values in an easy way when listening to streams
 class GameTimerCubit extends HydratedCubit<GameTimerState> {
   GameTimerCubit({required this.gameTimerRepository})
-    : super(const GameTimerState.initializing()) {
-    _timerSubscription = gameTimerRepository.timer.listen(_onTimerTick);
+      : super(const GameTimerState.initializing()) {
+    _timerSubscription = gameTimerRepository.timer.listen(
+      _onTimerTick,
+      onError: (error) {
+        emit(const ErrorTickingGameTimerState());
+      },
+    );
   }
 
   final GameTimerRepository gameTimerRepository;
@@ -35,9 +40,9 @@ class GameTimerCubit extends HydratedCubit<GameTimerState> {
 
   @override
   Map<String, dynamic>? toJson(GameTimerState state) => switch (state) {
-    TickedGameTimerState() => {'secondsLasted': state.seconds},
-    _ => null,
-  };
+        TickedGameTimerState() => {'secondsLasted': state.seconds},
+        _ => null,
+      };
 
   @override
   Future<void> close() async {

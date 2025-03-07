@@ -9,7 +9,6 @@ void main() {
     cubit = HeartsCubit();
   });
 
-  
   /// Testing the method [start]
   group('when the method start is called', () {
     blocTest<HeartsCubit, HeartsState>(
@@ -29,7 +28,7 @@ void main() {
       },
     );
   });
-  
+
   /// Testing the method [changeLife]
   group('when the method changeLife is called', () {
     blocTest<HeartsCubit, HeartsState>(
@@ -39,7 +38,7 @@ void main() {
       },
       build: () => cubit,
       act: (cubit) {
-        cubit.changeLife();
+        cubit.changeLife(-1);
       },
       expect: () => <HeartsState>[
         //TODO: define the emitted HeartsState states
@@ -49,5 +48,4 @@ void main() {
       },
     );
   });
-  
 }
