@@ -46,6 +46,8 @@ class HeartsCubit extends HydratedCubit<HeartsState> {
       return HeartsState.active(jsonHearts);
     } else if (jsonHearts == 1) {
       return HeartsState.lowHearts(jsonHearts!);
+    } else if ((jsonHearts ?? 0) < 1) {
+      return const HeartsState.noHearts();
     } else {
       return const HeartsState.active();
     }
