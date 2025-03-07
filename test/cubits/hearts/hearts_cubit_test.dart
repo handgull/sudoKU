@@ -2,49 +2,33 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/cubits/hearts/hearts_cubit.dart';
 
+import '../../helpers/hydrated_blocs.dart';
+
 void main() {
   late HeartsCubit cubit;
 
   setUp(() {
+    initHydratedStorage();
     cubit = HeartsCubit();
   });
 
-  /// Testing the method [start]
-  group('when the method start is called', () {
+  group('[HeartsCubit] when the method changeLife is called', () {
     blocTest<HeartsCubit, HeartsState>(
-      'test that HeartsCubit emits HeartsState.active when start is called',
+      'test that cubit emits HeartsState.active when changeLife is called',
       setUp: () {
-        //TODO: setup the environment
-      },
-      build: () => cubit,
-      act: (cubit) {
-        cubit.start();
-      },
-      expect: () => <HeartsState>[
-        //TODO: define the emitted HeartsState states
-      ],
-      verify: (_) {
-        //TODO: verify that methods are invoked properly
-      },
-    );
-  });
-
-  /// Testing the method [changeLife]
-  group('when the method changeLife is called', () {
-    blocTest<HeartsCubit, HeartsState>(
-      'test that HeartsCubit emits HeartsState.active when changeLife is called',
-      setUp: () {
-        //TODO: setup the environment
+        // I do not need to mock nothing
       },
       build: () => cubit,
       act: (cubit) {
         cubit.changeLife(-1);
       },
       expect: () => <HeartsState>[
-        //TODO: define the emitted HeartsState states
+        const HeartsState.changingHearts(3),
+        const HeartsState.active(2),
       ],
       verify: (_) {
-        //TODO: verify that methods are invoked properly
+        // I do not need to call nothing to set the active cell
+        // (this can change if will not be used HydratedCubit for persistance)
       },
     );
   });

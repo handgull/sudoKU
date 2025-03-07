@@ -4,6 +4,8 @@ part of 'active_cell_cubit.dart';
 sealed class ActiveCellState with _$ActiveCellState {
   const factory ActiveCellState.activating() = ActivatingActiveCellState;
 
+  const factory ActiveCellState.initialized() = InitializedActiveCellState;
+
   const factory ActiveCellState.active(int? quadrant, int? index) =
       ActiveActiveCellState;
 
