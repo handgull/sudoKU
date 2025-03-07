@@ -8,7 +8,6 @@ sealed class GameEvent with _$GameEvent {
   }) = StartGameEvent;
 
   const factory GameEvent.move({
-    required SudokuData data,
     required int quadrant,
     required int index,
     required int value,
@@ -22,4 +21,6 @@ sealed class GameEvent with _$GameEvent {
     required int index,
     required int value,
   }) = AddNoteGameEvent;
+
+  const factory GameEvent.noHearts() = NoHeartsGameEvent;
 }

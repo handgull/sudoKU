@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku/misc/sudoku_cell_operations.dart';
 import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
+import 'package:sudoku/pages/game/widgets/board/emergency_filter.dart';
 import 'package:sudoku/pages/game/widgets/board/paused_overlay.dart';
 import 'package:sudoku/pages/game/widgets/board/sudoku_quadrant.dart';
 import 'package:sudoku/widgets/confetti.dart';
@@ -13,6 +14,7 @@ class Board extends StatelessWidget {
     required this.onCellTap,
     required this.restart,
     required this.errorState,
+    required this.emergency,
     this.activeQuadrant,
     this.activeQuadrantIndex,
     this.status = BoardStatus.running,
@@ -26,44 +28,50 @@ class Board extends StatelessWidget {
   final void Function(int, int) onCellTap;
   final void Function() restart;
   final bool errorState;
+  final bool emergency;
 
   @override
   Widget build(BuildContext context) {
+    final boardBody = Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        AbsorbPointer(
+          absorbing: status != BoardStatus.running,
+          child: GridView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 1,
+              mainAxisSpacing: 1,
+            ),
+            itemCount: (board?.isNotEmpty ?? false) ? board?.length : 9,
+            itemBuilder: (context, index) => SudokuQuadrant(
+              subGrid: _genQuadrant(board, index),
+              onQuadrantTap: (cellIndex) => onCellTap(index, cellIndex),
+              active: status == BoardStatus.running && activeQuadrant == index,
+              activeQuadrantIndex: activeQuadrantIndex,
+              errorState: errorState,
+            ),
+          ),
+        ),
+        if (board == null) const CircularProgressIndicator(),
+        if (status == BoardStatus.paused)
+          PausedOverlay(restart: restart)
+        else if (status == BoardStatus.won)
+          const Confetti(),
+      ],
+    );
+
     return Card(
       clipBehavior: Clip.hardEdge, // Forced because of the border radius
       color: Theme.of(context).dividerTheme.color,
-      child: Stack(
-        alignment: AlignmentDirectional.center,
-        children: [
-          AbsorbPointer(
-            absorbing: status != BoardStatus.running,
-            child: GridView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 1,
-                mainAxisSpacing: 1,
-              ),
-              itemCount: (board?.isNotEmpty ?? false) ? board?.length : 9,
-              itemBuilder: (context, index) => SudokuQuadrant(
-                subGrid: _genQuadrant(board, index),
-                onQuadrantTap: (cellIndex) => onCellTap(index, cellIndex),
-                active:
-                    status == BoardStatus.running && activeQuadrant == index,
-                activeQuadrantIndex: activeQuadrantIndex,
-                errorState: errorState,
-              ),
-            ),
-          ),
-          if (board == null) const CircularProgressIndicator(),
-          if (status == BoardStatus.paused)
-            PausedOverlay(restart: restart)
-          else if (status == BoardStatus.won)
-            const Confetti(),
-        ],
-      ),
+      child: emergency
+          ? EmergencyEffect(
+              child: boardBody,
+            )
+          : boardBody,
     );
   }
 

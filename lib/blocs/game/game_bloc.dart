@@ -21,6 +21,7 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     on<MoveGameEvent>(_onMove);
     on<TogglePauseGameEvent>(_onTogglePause);
     on<AddNoteGameEvent>(_onAddNote);
+    on<NoHeartsGameEvent>(_onNoHearts);
   }
 
   final GameRepository gameRepository;
@@ -38,14 +39,12 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
       );
 
   void move({
-    required SudokuData data,
     required int quadrant,
     required int index,
     required int value,
   }) =>
       add(
         GameEvent.move(
-          data: data,
           quadrant: quadrant,
           index: index,
           value: value,
@@ -67,6 +66,10 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
           index: index,
           value: value,
         ),
+      );
+
+  void noHearts() => add(
+        const GameEvent.noHearts(),
       );
 
   FutureOr<void> _onStart(StartGameEvent event, Emitter<GameState> emit) {
@@ -95,13 +98,28 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
   }
 
   FutureOr<void> _onMove(MoveGameEvent event, Emitter<GameState> emit) {
+    final data = switch (state) {
+      RunningGameState() => (state as RunningGameState).data,
+      LastInvalidGameState() => (state as LastInvalidGameState).data,
+      PausedGameState() => (state as PausedGameState).data,
+      ErrorTogglingPauseGameState() =>
+        (state as ErrorTogglingPauseGameState).data,
+      MovingGameState() => (state as MovingGameState).data,
+      ErrorMovingGameState() => (state as ErrorMovingGameState).data,
+      _ => null,
+    };
+
+    if (data == null) {
+      return null;
+    }
+
     try {
-      emit(GameState.moving(event.data));
+      emit(GameState.moving(data));
       final validMove = gameRepository.checkMove(
         event.quadrant,
         event.index,
         event.value,
-        event.data.board,
+        data.board,
       );
       final newBoard = gameRepository.move(
         event.quadrant,
@@ -111,28 +129,28 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
           editable: true,
           invalidValue: !validMove,
         ),
-        event.data.board,
+        data.board,
       );
-      final data = event.data.copyWith(board: newBoard);
+      final newData = data.copyWith(board: newBoard);
 
       if (validMove) {
-        emit(GameState.running(data));
+        emit(GameState.running(newData));
       } else {
-        emit(GameState.lastInvalid(data));
+        emit(GameState.lastInvalid(newData));
       }
 
-      final completed = gameRepository.checkCompleted(data.board);
-      final solved = gameRepository.checkSolved(data);
+      final completed = gameRepository.checkCompleted(newData.board);
+      final solved = completed && gameRepository.checkSolved(newData);
 
       if (solved) {
         gameTimerRepository.togglePause();
-        emit(GameState.won(data));
+        emit(GameState.won(newData));
       } else if (completed) {
         gameTimerRepository.togglePause();
-        emit(GameState.gameOver(data));
+        emit(GameState.gameOver(newData));
       }
     } on Exception catch (_) {
-      emit(const GameState.errorStarting());
+      emit(GameState.errorMoving(data));
     }
   }
 
@@ -168,6 +186,15 @@ class GameBloc extends HydratedBloc<GameEvent, GameState> {
     } on Exception catch (_) {
       emit(GameState.errorAddingNote(event.data));
     }
+  }
+
+  FutureOr<void> _onNoHearts(NoHeartsGameEvent event, Emitter<GameState> emit) {
+    final data = findGameData(state);
+    if (data == null) {
+      return null;
+    }
+    gameTimerRepository.togglePause();
+    emit(GameState.gameOver(data));
   }
 
   @override

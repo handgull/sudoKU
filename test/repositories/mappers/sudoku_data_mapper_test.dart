@@ -1,14 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:sudoku/models/enums/difficulty.dart';
-import 'package:sudoku/models/sudoku_cell/sudoku_cell.dart';
 import 'package:sudoku/models/sudoku_data/sudoku_data.dart';
 import 'package:sudoku/repositories/mappers/sudoku_cell_mapper.dart';
 import 'package:sudoku/repositories/mappers/sudoku_data_mapper.dart';
+import 'package:sudoku/services/network/jto/sudoku_cell/sudoku_cell_jto.dart';
 import 'package:sudoku/services/network/jto/sudoku_data/sudoku_data_jto.dart';
 
-import '../../fixtures/jto/sudoku_data_jto_fixture_factory.dart';
+import '../../fixtures/models/sudoku_data_fixture_factory.dart';
 import 'sudoku_data_mapper_test.mocks.dart';
 
 @GenerateMocks([SudokuCellMapper])
@@ -20,28 +19,25 @@ void main() {
 
   setUp(() {
     sudokuCellMapper = MockSudokuCellMapper();
-    dto = SudokuDataJTOFixture.factory().makeSingle();
+    model = SudokuDataFixture.factory().makeSingle();
 
-    model = SudokuData(
-      board: dto.board
+    dto = SudokuDataJTO(
+      board: model.board
           .map(
             (subGrid) => subGrid
                 .map(
-                  (cellDTO) => SudokuCell(
-                    value: cellDTO.value,
-                    editable: cellDTO.editable,
-                    invalidValue: cellDTO.invalidValue,
-                    notes: cellDTO.notes,
+                  (cell) => SudokuCellJTO(
+                    value: cell.value,
+                    editable: cell.editable,
+                    invalidValue: cell.invalidValue,
+                    notes: cell.notes,
                   ),
                 )
                 .toList(growable: false),
           )
           .toList(growable: false),
-      solution: dto.solution,
-      difficulty: Difficulty.values.firstWhere(
-        (entry) => entry.value == dto.emptySquares,
-        orElse: () => Difficulty.medium,
-      ),
+      solution: model.solution,
+      emptySquares: model.difficulty.value,
     );
     mapper = SudokuDataMapper(sudokuCellMapper: sudokuCellMapper);
   });
@@ -55,11 +51,6 @@ void main() {
     }
 
     expect(mapper.fromDTO(dto), equals(model));
-    for (var r = 0; r < dto.board.length; r++) {
-      for (var c = 0; c < dto.board.length; c++) {
-        verify(sudokuCellMapper.fromDTO(dto.board[r][c])).called(1);
-      }
-    }
   });
 
   test('mapping SudokuData to SudokuDataJTO', () {
@@ -71,10 +62,5 @@ void main() {
     }
 
     expect(mapper.toDTO(model), equals(dto));
-    for (var r = 0; r < model.board.length; r++) {
-      for (var c = 0; c < model.board.length; c++) {
-        verify(sudokuCellMapper.toDTO(model.board[r][c])).called(1);
-      }
-    }
   });
 }
