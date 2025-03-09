@@ -20,6 +20,13 @@
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"
+    },
+    {
+      "name": "sudoku on chrome",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--web-port", "4200"],
+      "deviceId": "chrome"
     }
   ]
 }
